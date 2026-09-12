@@ -292,14 +292,15 @@ export function QuestApp() {
         <section className="space-y-8">
           <div className="space-y-5">
             <p className="text-[11px] tracking-[0.32em] text-[#C9A227] uppercase">
-              Petition // 001
+              Petition // 001 · 1,111 wardens
             </p>
             <h1 className="font-display max-w-xl text-4xl leading-[1.15] text-[#E8E0D4] sm:text-5xl">
               After names became liabilities, an order bound identity into relics.
             </h1>
             <p className="max-w-lg text-base leading-7 text-[#E8E0D4]/70">
               Umbra is the darkest part of a shadow. Each binding is a mask, a key, and a face
-              you can wear without explaining yourself.{" "}
+              you can wear without explaining yourself. One thousand one hundred eleven nocturnal
+              wardens — minting on Robinhood Chain.{" "}
               {oauth
                 ? "Petition the Order. Bind your X. Follow, like, and retweet. Enter the ETH address at the door."
                 : "Petition the Order. Leave your X. Follow, like, and retweet. Enter the ETH address at the door."}{" "}
@@ -646,7 +647,8 @@ export function QuestApp() {
       <footer className="mt-auto border-t border-[#C9A227]/15 px-5 py-6 sm:px-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 text-xs leading-6 text-[#E8E0D4]/40 sm:flex-row sm:items-start sm:justify-between">
           <p>
-            UMBRA — the darkest part of a shadow. Relics worn in shadow.{" "}
+            UMBRA — the darkest part of a shadow. Relics worn in shadow. 1,111 nocturnal
+            wardens minting on Robinhood Chain.{" "}
             <a
               href={UMBRA_X_URL}
               target="_blank"
@@ -657,8 +659,9 @@ export function QuestApp() {
             </a>
           </p>
           <p className="max-w-xl sm:text-right">
-            UMBRA is an independent project. Not affiliated with Robinhood Markets,
-            Inc., its affiliates, or its products.
+            UMBRA is an independent project. Not a stock token. Not equity. Not affiliated
+            with Robinhood Markets, Inc., its affiliates, or its products. Settlement is
+            Ethereum L2 (Arbitrum Orbit).
           </p>
         </div>
       </footer>
