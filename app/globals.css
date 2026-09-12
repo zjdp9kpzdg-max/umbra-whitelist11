@@ -99,10 +99,10 @@
     @apply bg-background text-foreground min-h-full;
     background-color: #07070a;
     background-image:
-      linear-gradient(180deg, rgba(7, 7, 10, 0.72) 0%, rgba(7, 7, 10, 0.88) 45%, rgba(7, 7, 10, 0.94) 100%),
-      url("/brand/bg.jpg");
+      linear-gradient(180deg, rgba(7, 7, 10, 0.55) 0%, rgba(7, 7, 10, 0.82) 40%, rgba(7, 7, 10, 0.94) 100%),
+      url("/brand/x_banner.jpg");
     background-size: cover;
-    background-position: center right;
+    background-position: center top;
     background-attachment: fixed;
     background-repeat: no-repeat;
   }

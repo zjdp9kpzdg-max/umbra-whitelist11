@@ -26,6 +26,17 @@ export const metadata: Metadata = {
     icon: [{ url: "/brand/icon-180.png", type: "image/png" }],
     apple: [{ url: "/brand/icon-180.png" }],
   },
+  openGraph: {
+    title: "UMBRA",
+    description: "Relics worn in shadow. Petition the Order.",
+    images: [{ url: "/brand/x_banner.jpg", width: 1500, height: 500 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "UMBRA",
+    description: "Relics worn in shadow. Petition the Order.",
+    images: ["/brand/x_banner.jpg"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
