@@ -628,7 +628,7 @@ export function QuestApp() {
               width={800}
               height={800}
               priority
-              className="relative w-full border border-[#C9A227]/20 shadow-[0_0_40px_rgba(201,162,39,0.08)]"
+              className="relative w-full"
             />
             <div className="pointer-events-none absolute -bottom-3 -right-3 sm:bottom-4 sm:right-4">
               <RelicMark size={88} className="h-16 w-16 sm:h-20 sm:w-20 drop-shadow-[0_0_18px_rgba(7,7,10,0.9)]" />
