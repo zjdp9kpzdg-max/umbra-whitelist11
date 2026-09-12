@@ -331,17 +331,17 @@ export function QuestApp() {
                 }
               >
                 {current.status === "approved"
-                  ? "Marked"
+                  ? "On the list"
                   : current.status === "rejected"
                     ? "Closed"
                     : "Under review"}
               </Badge>
               <h2 className="font-display mt-4 text-3xl text-[#E8E0D4]">
                 {current.status === "approved"
-                  ? "The Order has marked this name."
+                  ? "You're on the list."
                   : current.status === "rejected"
                     ? "This door does not open."
-                    : "Your petition waits in the ledger."}
+                    : "Under review."}
               </h2>
               <p className="mt-3 text-sm text-[#E8E0D4]/65">
                 @{current.handle}
@@ -399,7 +399,7 @@ export function QuestApp() {
                             </Button>
                           ) : (
                             <a
-                              href="/api/auth/twitter"
+                              href="/api/auth/twitter?next=/"
                               className={cn(
                                 buttonVariants(),
                                 "rounded-none bg-[#C9A227] text-[#07070A] hover:bg-[#C9A227]/90"

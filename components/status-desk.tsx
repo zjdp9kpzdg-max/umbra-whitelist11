@@ -36,7 +36,7 @@ function statusCopy(state: PublicState) {
     return {
       badge: "Sealed",
       title: "Bind your X to read the ledger.",
-      body: "The umbra keeps names by the face you bind. Connect X to see if your petition waits in shadow — or if the door has opened.",
+      body: "The umbra keeps names by the face you bind. Connect X to see if your petition is under review — or if you are on the list.",
     };
   }
   if (!state.submitted) {
@@ -48,9 +48,9 @@ function statusCopy(state: PublicState) {
   }
   if (state.status === "approved") {
     return {
-      badge: "Marked",
-      title: "The Order has marked this name.",
-      body: "The door knows you. Watch the signal. Selection still moves in silence — nothing here is automatic favor.",
+      badge: "On the list",
+      title: "You're on the list.",
+      body: "The Order has marked this name. The door knows you. Watch the signal — selection still moves in silence.",
     };
   }
   if (state.status === "rejected") {
@@ -62,8 +62,8 @@ function statusCopy(state: PublicState) {
   }
   return {
     badge: "Under review",
-    title: "Your petition waits in the ledger.",
-    body: "Selection is not guaranteed. The Order reviews in silence. Relics worn in shadow.",
+    title: "Under review.",
+    body: "Your petition waits in the ledger. Selection is not guaranteed. The Order reviews in silence. Relics worn in shadow.",
   };
 }
 
@@ -74,7 +74,7 @@ export function StatusDesk() {
 
   useEffect(() => {
     let alive = true;
-    (async () => {
+    async function load() {
       try {
         const res = await fetch("/api/session", { cache: "no-store" });
         const data = (await res.json()) as PublicState;
@@ -82,9 +82,13 @@ export function StatusDesk() {
       } finally {
         if (alive) setReady(true);
       }
-    })();
+    }
+    load();
+    // Refetch so admin approve/reject appears without a hard reload.
+    const timer = window.setInterval(load, 15000);
     return () => {
       alive = false;
+      window.clearInterval(timer);
     };
   }, []);
 
@@ -125,8 +129,8 @@ export function StatusDesk() {
           Read your place at the door.
         </h1>
         <p className="mt-3 max-w-md text-sm leading-6 text-[#E8E0D4]/60">
-          Umbra is the darkest part of a shadow. Petitions begin under review. If the Order
-          marks you, this page will say so. Nothing here is automatic favor.
+          Umbra is the darkest part of a shadow. Bind your X to read the ledger: under review,
+          or on the list. Nothing here is automatic favor.
         </p>
 
         {!ready ? (
@@ -146,7 +150,7 @@ export function StatusDesk() {
             <div className="mt-8 flex flex-wrap gap-3">
               {!state.connected && state.oauthEnabled && (
                 <a
-                  href="/api/auth/twitter"
+                  href="/api/auth/twitter?next=/status"
                   className={cn(
                     buttonVariants(),
                     "rounded-none bg-[#C9A227] text-[#07070A] hover:bg-[#C9A227]/90"

@@ -20,6 +20,7 @@ export type Registration = {
 type Store = {
   upsert(entry: Omit<Registration, "status" | "reviewedAt"> & { status?: ApplicationStatus }): Promise<void>;
   get(twitterUserId: string): Promise<Registration | null>;
+  getByHandle(handle: string): Promise<Registration | null>;
   list(status?: ApplicationStatus): Promise<Registration[]>;
   setStatus(twitterUserId: string, status: ApplicationStatus): Promise<Registration | null>;
 };
@@ -122,6 +123,15 @@ function createSqliteStore(filePath: string): Store {
       ) as Parameters<typeof mapRow>[0] | undefined;
       return row ? mapRow(row) : null;
     },
+    async getByHandle(handle) {
+      const normalized = handle.replace(/^@/, "").toLowerCase();
+      const row = db
+        .prepare(
+          `SELECT ${SELECT_COLS} FROM registrations WHERE lower(twitter_handle) = ? ORDER BY registered_at DESC LIMIT 1`
+        )
+        .get(normalized) as Parameters<typeof mapRow>[0] | undefined;
+      return row ? mapRow(row) : null;
+    },
     async list(status) {
       const rows = (
         status
@@ -203,6 +213,18 @@ function createPostgresStore(url: string): Store {
       `;
       return rows[0] ? mapRow(rows[0]) : null;
     },
+    async getByHandle(handle) {
+      await ready;
+      const normalized = handle.replace(/^@/, "").toLowerCase();
+      const rows = await sql<Parameters<typeof mapRow>[0][]>`
+        SELECT twitter_user_id, twitter_handle, wallet_address, liked, retweeted, registered_at, status, reviewed_at
+        FROM registrations
+        WHERE lower(twitter_handle) = ${normalized}
+        ORDER BY registered_at DESC
+        LIMIT 1
+      `;
+      return rows[0] ? mapRow(rows[0]) : null;
+    },
     async list(status) {
       await ready;
       const rows = status
@@ -252,6 +274,24 @@ export async function getRegistration(
   twitterUserId: string
 ): Promise<Registration | null> {
   return getStore().get(twitterUserId);
+}
+
+export async function getRegistrationByHandle(
+  handle: string
+): Promise<Registration | null> {
+  return getStore().getByHandle(handle);
+}
+
+export function databaseDialect(): "postgres" | "sqlite" {
+  const url = getDatabaseUrl();
+  if (url.startsWith("postgres://") || url.startsWith("postgresql://")) {
+    return "postgres";
+  }
+  return "sqlite";
+}
+
+export function databasePersists(): boolean {
+  return databaseDialect() === "postgres";
 }
 
 export async function listRegistrations(

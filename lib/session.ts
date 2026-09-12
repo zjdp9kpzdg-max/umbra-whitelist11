@@ -17,6 +17,7 @@ export type SessionData = {
   likeUnsupported?: boolean;
   oauthState?: string;
   codeVerifier?: string;
+  oauthReturnPath?: string;
 };
 
 function options(): SessionOptions {

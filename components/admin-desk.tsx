@@ -19,6 +19,7 @@ export function AdminDesk() {
   const [rows, setRows] = useState<Registration[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [dbNote, setDbNote] = useState<string | null>(null);
 
   const headers = useCallback(
     () => ({
@@ -37,9 +38,23 @@ export function AdminDesk() {
         headers: headers(),
         cache: "no-store",
       });
-      const data = (await res.json()) as { submissions?: Registration[]; error?: string };
+      const data = (await res.json()) as {
+        submissions?: Registration[];
+        error?: string;
+        database?: string;
+        persists?: boolean;
+      };
       if (!res.ok) throw new Error(data.error || "The ledger would not open.");
       setRows(data.submissions ?? []);
+      if (data.persists === false) {
+        setDbNote(
+          "Ledger is on ephemeral SQLite. Approvals will not stick on Vercel until DATABASE_URL is a Postgres URL."
+        );
+      } else if (data.database) {
+        setDbNote(`Ledger on ${data.database} — approvals persist.`);
+      } else {
+        setDbNote(null);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "The ledger would not open.");
       setRows([]);
@@ -101,9 +116,20 @@ export function AdminDesk() {
       </p>
       <h1 className="font-display mt-3 text-4xl text-[#E8E0D4]">Petitions</h1>
       <p className="mt-2 max-w-xl text-sm leading-6 text-[#E8E0D4]/60">
-        Submissions wait here. Approval writes them to the mint list. Rejection
-        closes the door. Nothing is automatic.
+        Submissions wait here. Approve to put them on the list — Status will show
+        it when they bind X. Rejection closes the door. Nothing is automatic.
       </p>
+      {dbNote && (
+        <p
+          className={`mt-4 border px-4 py-3 text-sm ${
+            dbNote.includes("ephemeral")
+              ? "border-[#8F3A32]/50 bg-[#8F3A32]/10 text-[#E8C4BC]"
+              : "border-[#1F6B4A]/40 bg-[#1F6B4A]/10 text-[#E8E0D4]/70"
+          }`}
+        >
+          {dbNote}
+        </p>
+      )}
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="min-w-0 flex-1">

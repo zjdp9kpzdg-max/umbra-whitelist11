@@ -1,4 +1,4 @@
-import { getRegistration } from "@/lib/db";
+import { getRegistration, getRegistrationByHandle } from "@/lib/db";
 import {
   getTargetTweetId,
   isBearerEnabled,
@@ -15,9 +15,12 @@ export type { PublicState };
 
 export async function publicState(session: SessionData): Promise<PublicState> {
   const connected = isConnected(session);
-  const record = session.twitterUserId
+  let record = session.twitterUserId
     ? await getRegistration(session.twitterUserId)
     : null;
+  if (!record && session.twitterHandle) {
+    record = await getRegistrationByHandle(session.twitterHandle);
+  }
   const targetTweetId = getTargetTweetId() || null;
 
   return {

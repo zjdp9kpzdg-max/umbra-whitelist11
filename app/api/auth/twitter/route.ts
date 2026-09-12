@@ -7,6 +7,14 @@ import { buildTwitterAuthUrl } from "@/lib/twitter";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const ALLOWED_NEXT = new Set(["/", "/status"]);
+
+function safeNext(raw: string | null): string {
+  if (!raw) return "/";
+  const path = raw.split("?")[0];
+  return ALLOWED_NEXT.has(path) ? path : "/";
+}
+
 function homeUrl(request: Request, query?: string): URL {
   const url = new URL(request.url);
   return new URL(query ? `/${query}` : "/", url.origin);
@@ -23,10 +31,12 @@ export async function GET(request: Request) {
   }
 
   const session = await getSession();
+  const next = safeNext(new URL(request.url).searchParams.get("next"));
   const state = randomToken(16);
   const verifier = pkceVerifier();
   session.oauthState = state;
   session.codeVerifier = verifier;
+  session.oauthReturnPath = next;
   await session.save();
 
   return NextResponse.redirect(buildTwitterAuthUrl(state, pkceChallenge(verifier)));

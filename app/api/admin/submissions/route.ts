@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { assertAdmin } from "@/lib/admin";
 import {
+  databaseDialect,
+  databasePersists,
   listRegistrations,
   parseStatus,
   setRegistrationStatus,
@@ -20,6 +22,8 @@ export async function GET(request: Request) {
   return NextResponse.json({
     count: rows.length,
     submissions: rows,
+    database: databaseDialect(),
+    persists: databasePersists(),
   });
 }
 
