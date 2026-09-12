@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   title: "UMBRA Whitelist",
   description:
     "Relics worn in shadow. Petition the Order. Watch @UMBRAStudio11.",
+  icons: {
+    icon: [{ url: "/brand/icon-180.png", type: "image/png" }],
+    apple: [{ url: "/brand/icon-180.png" }],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

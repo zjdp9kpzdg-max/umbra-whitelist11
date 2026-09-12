@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function AdminPage() {
   return (
-    <div className="flex min-h-full flex-1 flex-col">
+    <div className="relative z-50 flex min-h-full flex-1 flex-col">
       <AdminDesk />
     </div>
   );

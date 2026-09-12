@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
@@ -237,13 +238,16 @@ export function QuestApp() {
   }
 
   return (
-    <div className="relative flex min-h-full flex-1 flex-col">
+    <div className="relative z-50 flex min-h-full flex-1 flex-col">
       <header className="mx-auto flex w-full max-w-6xl items-end justify-between gap-6 px-5 py-6 sm:px-8">
-        <div>
-          <p className="font-display text-2xl tracking-[0.34em] text-[#C9A227]">UMBRA</p>
-          <p className="mt-1 text-xs tracking-[0.18em] text-[#E8E0D4]/55 uppercase">
-            Relics worn in shadow.
-          </p>
+        <div className="flex items-center gap-3">
+          <RelicMark size={44} priority className="h-11 w-11 shrink-0" />
+          <div>
+            <p className="font-display text-2xl tracking-[0.34em] text-[#C9A227]">UMBRA</p>
+            <p className="mt-1 text-xs tracking-[0.18em] text-[#E8E0D4]/55 uppercase">
+              Relics worn in shadow.
+            </p>
+          </div>
         </div>
         <nav className="flex items-center gap-4 text-[11px] tracking-[0.2em] text-[#E8E0D4]/50 uppercase">
           <Link href="/" className="hover:text-[#C9A227]">
@@ -532,8 +536,20 @@ export function QuestApp() {
         </section>
 
         <aside className="relative flex items-center justify-center lg:min-h-[520px]">
-          <div className="absolute inset-8 rounded-full bg-[#1F6B4A]/10 blur-3xl" />
-          <RelicMark className="relative w-full max-w-[360px] drop-shadow-[0_0_40px_rgba(201,162,39,0.12)]" />
+          <div className="absolute inset-10 bg-[#1F6B4A]/10 blur-3xl" />
+          <div className="relative w-full max-w-[420px]">
+            <Image
+              src="/brand/hero_warden.png"
+              alt="UMBRA warden"
+              width={800}
+              height={800}
+              priority
+              className="relative w-full border border-[#C9A227]/20 shadow-[0_0_40px_rgba(201,162,39,0.08)]"
+            />
+            <div className="pointer-events-none absolute -bottom-3 -right-3 sm:bottom-4 sm:right-4">
+              <RelicMark size={88} className="h-16 w-16 sm:h-20 sm:w-20 drop-shadow-[0_0_18px_rgba(7,7,10,0.9)]" />
+            </div>
+          </div>
         </aside>
       </main>
 

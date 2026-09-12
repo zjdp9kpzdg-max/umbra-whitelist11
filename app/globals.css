@@ -97,10 +97,14 @@
 
   body {
     @apply bg-background text-foreground min-h-full;
+    background-color: #07070a;
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201, 162, 39, 0.08), transparent 55%),
-      radial-gradient(ellipse 40% 40% at 100% 100%, rgba(31, 107, 74, 0.12), transparent 50%),
-      radial-gradient(ellipse 30% 30% at 0% 80%, rgba(201, 162, 39, 0.04), transparent 45%);
+      linear-gradient(180deg, rgba(7, 7, 10, 0.72) 0%, rgba(7, 7, 10, 0.88) 45%, rgba(7, 7, 10, 0.94) 100%),
+      url("/brand/bg.jpg");
+    background-size: cover;
+    background-position: center right;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 
   body::before {
@@ -109,7 +113,7 @@
     position: fixed;
     inset: 0;
     z-index: 40;
-    opacity: 0.13;
+    opacity: 0.16;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
@@ -119,9 +123,10 @@
     position: fixed;
     inset: 0;
     z-index: 30;
-    box-shadow: inset 0 0 180px 36px #07070a;
+    box-shadow: inset 0 0 160px 48px #07070a;
   }
 }
+
 
 @utility font-display {
   font-family: var(--font-display), ui-serif, Georgia, serif;
