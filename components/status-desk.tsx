@@ -5,8 +5,11 @@ import Link from "next/link";
 import { SiteNav } from "@/components/site-nav";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { UMBRA_X_HANDLE } from "@/lib/brand";
+import type { ApplicationStatus } from "@/lib/db";
 import type { PublicState } from "@/lib/types";
 
 const empty: PublicState = {
@@ -31,29 +34,40 @@ const empty: PublicState = {
   retweetUrl: null,
 };
 
-function statusCopy(state: PublicState) {
-  if (!state.connected) {
+type ViewState = {
+  connected: boolean;
+  lookedUp: boolean;
+  handle: string | null;
+  submitted: boolean;
+  status: ApplicationStatus | null;
+  walletLine: string | null;
+};
+
+function statusCopy(view: ViewState) {
+  if (!view.connected && !view.lookedUp) {
     return {
       badge: "Sealed",
-      title: "Bind your X to read the ledger.",
-      body: "The umbra keeps names by the face you bind. Connect X to see if your petition is under review — or if you are on the list.",
+      title: "Bind your X — or leave the handle.",
+      body: "Connect X to read the ledger, or enter the handle you petitioned with. Under review, or on the list.",
     };
   }
-  if (!state.submitted) {
+  if (!view.submitted) {
     return {
       badge: "Empty",
       title: "No petition on file.",
-      body: `Bound as @${state.handle}. Leave a petition if you mean to be seen. Selection is not automatic.`,
+      body: view.handle
+        ? `No sealed petition for @${view.handle}. Leave a petition if you mean to be seen. Selection is not automatic.`
+        : "Leave a petition if you mean to be seen. Selection is not automatic.",
     };
   }
-  if (state.status === "approved") {
+  if (view.status === "approved") {
     return {
       badge: "On the list",
       title: "You're on the list.",
       body: "The Order has marked this name. The door knows you. Watch the signal — selection still moves in silence.",
     };
   }
-  if (state.status === "rejected") {
+  if (view.status === "rejected") {
     return {
       badge: "Closed",
       title: "This door does not open.",
@@ -68,9 +82,25 @@ function statusCopy(state: PublicState) {
 }
 
 export function StatusDesk() {
-  const [state, setState] = useState<PublicState>(empty);
+  const [session, setSession] = useState<PublicState>(empty);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [lookupBusy, setLookupBusy] = useState(false);
+  const [handleInput, setHandleInput] = useState("");
+  const [lookupError, setLookupError] = useState<string | null>(null);
+  const [lookup, setLookup] = useState<{
+    lookedUp: boolean;
+    handle: string | null;
+    submitted: boolean;
+    status: ApplicationStatus | null;
+    walletHint: string | null;
+  }>({
+    lookedUp: false,
+    handle: null,
+    submitted: false,
+    status: null,
+    walletHint: null,
+  });
 
   useEffect(() => {
     let alive = true;
@@ -78,13 +108,12 @@ export function StatusDesk() {
       try {
         const res = await fetch("/api/session", { cache: "no-store" });
         const data = (await res.json()) as PublicState;
-        if (alive) setState({ ...empty, ...data });
+        if (alive) setSession({ ...empty, ...data });
       } finally {
         if (alive) setReady(true);
       }
     }
     load();
-    // Refetch so admin approve/reject appears without a hard reload.
     const timer = window.setInterval(load, 15000);
     return () => {
       alive = false;
@@ -95,7 +124,7 @@ export function StatusDesk() {
   async function logout() {
     setBusy(true);
     await fetch("/api/auth/logout", { method: "POST" });
-    setState((prev) => ({
+    setSession((prev) => ({
       ...prev,
       connected: false,
       handle: null,
@@ -110,13 +139,66 @@ export function StatusDesk() {
     setBusy(false);
   }
 
-  const copy = statusCopy(state);
+  async function lookupHandle() {
+    setLookupBusy(true);
+    setLookupError(null);
+    try {
+      const res = await fetch("/api/status/lookup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ handle: handleInput }),
+      });
+      const data = (await res.json()) as {
+        error?: string;
+        found?: boolean;
+        handle?: string | null;
+        submitted?: boolean;
+        status?: ApplicationStatus | null;
+        walletHint?: string | null;
+      };
+      if (!res.ok) throw new Error(data.error || "The ledger would not open.");
+      setLookup({
+        lookedUp: true,
+        handle: data.handle ?? null,
+        submitted: Boolean(data.submitted),
+        status: data.status ?? null,
+        walletHint: data.walletHint ?? null,
+      });
+    } catch (err) {
+      setLookupError(err instanceof Error ? err.message : "The ledger would not open.");
+    } finally {
+      setLookupBusy(false);
+    }
+  }
+
+  // Session (Connect X) wins when connected; otherwise use handle lookup.
+  const view: ViewState = session.connected
+    ? {
+        connected: true,
+        lookedUp: false,
+        handle: session.handle,
+        submitted: session.submitted,
+        status: session.status,
+        walletLine: session.walletAddress,
+      }
+    : {
+        connected: false,
+        lookedUp: lookup.lookedUp,
+        handle: lookup.handle,
+        submitted: lookup.submitted,
+        status: lookup.status,
+        walletLine: lookup.walletHint,
+      };
+
+  const copy = statusCopy(view);
   const badgeTone =
-    state.status === "approved"
+    view.status === "approved"
       ? "border-[#1F6B4A] bg-[#1F6B4A] text-[#E8E0D4]"
-      : state.status === "rejected"
+      : view.status === "rejected"
         ? "border-[#8F3A32] bg-[#8F3A32]/20 text-[#E8C4BC]"
         : "border-[#C9A227]/50 bg-[#C9A227]/10 text-[#C9A227]";
+
+  const showLookupForm = !session.connected;
 
   return (
     <div className="relative z-50 flex min-h-full flex-1 flex-col">
@@ -129,8 +211,8 @@ export function StatusDesk() {
           Read your place at the door.
         </h1>
         <p className="mt-3 max-w-md text-sm leading-6 text-[#E8E0D4]/60">
-          Umbra is the darkest part of a shadow. Bind your X to read the ledger: under review,
-          or on the list. Nothing here is automatic favor.
+          Umbra is the darkest part of a shadow. Bind your X, or leave the handle you
+          petitioned with — under review, or on the list. Nothing here is automatic favor.
         </p>
 
         {!ready ? (
@@ -140,15 +222,56 @@ export function StatusDesk() {
             <Badge className={cn("rounded-none", badgeTone)}>{copy.badge}</Badge>
             <h2 className="font-display mt-4 text-3xl text-[#E8E0D4]">{copy.title}</h2>
             <p className="mt-3 text-sm leading-6 text-[#E8E0D4]/70">{copy.body}</p>
-            {state.connected && (
+            {(view.connected || view.lookedUp) && view.handle && (
               <p className="mt-4 font-mono text-xs text-[#E8E0D4]/45">
-                @{state.handle}
-                {state.walletAddress ? ` · ${state.walletAddress}` : ""}
+                @{view.handle}
+                {view.walletLine ? ` · ${view.walletLine}` : ""}
               </p>
             )}
 
+            {showLookupForm && (
+              <div className="mt-8 border-t border-[#C9A227]/15 pt-6">
+                <p className="text-[11px] tracking-[0.22em] text-[#C9A227] uppercase">
+                  Or leave the handle
+                </p>
+                <Label htmlFor="status-handle" className="mt-2 text-sm font-normal text-[#E8E0D4]/70">
+                  If Connect X will not open, enter the X handle from your petition.
+                </Label>
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <Input
+                    id="status-handle"
+                    value={handleInput}
+                    onChange={(e) => {
+                      setHandleInput(e.target.value);
+                      setLookupError(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        void lookupHandle();
+                      }
+                    }}
+                    placeholder="@handle"
+                    className="h-10 rounded-none border-[#C9A227]/30 bg-[#07070A] text-sm sm:max-w-xs"
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                  <Button
+                    className="h-10 rounded-none bg-[#C9A227] text-[#07070A] hover:bg-[#C9A227]/90"
+                    onClick={lookupHandle}
+                    disabled={lookupBusy || !handleInput.trim()}
+                  >
+                    {lookupBusy ? "Reading…" : "Read the ledger"}
+                  </Button>
+                </div>
+                {lookupError && (
+                  <p className="mt-2 text-xs text-[#C4A08A]">{lookupError}</p>
+                )}
+              </div>
+            )}
+
             <div className="mt-8 flex flex-wrap gap-3">
-              {!state.connected && state.oauthEnabled && (
+              {!session.connected && session.oauthEnabled && (
                 <a
                   href="/api/auth/twitter?next=/status"
                   className={cn(
@@ -159,7 +282,7 @@ export function StatusDesk() {
                   Connect X
                 </a>
               )}
-              {state.connected && (
+              {session.connected && (
                 <Button
                   variant="outline"
                   className="rounded-none border-[#C9A227]/40"
@@ -176,7 +299,7 @@ export function StatusDesk() {
                   "rounded-none border-[#C9A227]/40"
                 )}
               >
-                {state.submitted ? "Return to Petition" : "Leave a petition"}
+                {view.submitted ? "Return to Petition" : "Leave a petition"}
               </Link>
             </div>
             <p className="mt-6 text-xs text-[#E8E0D4]/40">
