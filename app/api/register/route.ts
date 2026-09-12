@@ -74,22 +74,36 @@ export async function POST(request: Request) {
 
     try {
       const engagement = await confirmOauthEngagement(session);
-      const followed =
-        engagement.followed ||
-        (Boolean(engagement.followUnsupported) && Boolean(body.followed));
-      if (!engagement.liked || !engagement.retweeted || !followed) {
-        session.liked = engagement.liked;
-        session.retweeted = engagement.retweeted;
-        session.followed = engagement.followed;
-        session.followUnsupported = Boolean(engagement.followUnsupported);
+      // Trust a prior successful verify in-session — liked_tweets pagination can flake on re-check.
+      const liked = Boolean(engagement.liked || session.liked);
+      const retweeted = Boolean(engagement.retweeted || session.retweeted);
+      const followUnsupported = Boolean(
+        engagement.followUnsupported || session.followUnsupported
+      );
+      const followedOk =
+        Boolean(engagement.followed) ||
+        (followUnsupported && Boolean(body.followed));
+      if (!liked || !retweeted || !followedOk) {
+        session.liked = liked;
+        session.retweeted = retweeted;
+        session.followed = Boolean(engagement.followed);
+        session.followUnsupported = followUnsupported;
         await session.save();
+        const missing: string[] = [];
+        if (!followedOk) missing.push("follow");
+        if (!liked) missing.push("like");
+        if (!retweeted) missing.push("retweet");
+        const detail =
+          followUnsupported && !followedOk
+            ? "Mark that you follow @UMBRAStudio11, then Seal again."
+            : `Still missing: ${missing.join(", ")}. Verify again, then Seal.`;
         return NextResponse.json(
           {
-            error: "Follow @UMBRAStudio11, like and retweet the quest post, then verify again.",
-            liked: engagement.liked,
-            retweeted: engagement.retweeted,
-            followed: engagement.followed,
-            followUnsupported: engagement.followUnsupported,
+            error: detail,
+            liked,
+            retweeted,
+            followed: Boolean(engagement.followed),
+            followUnsupported,
           },
           { status: 403 }
         );

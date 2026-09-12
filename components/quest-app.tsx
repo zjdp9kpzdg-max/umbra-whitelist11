@@ -220,10 +220,14 @@ export function QuestApp() {
         body: JSON.stringify({
           wallet,
           handle,
-          liked: oauth || (bearer && !current.likeUnsupported) ? current.liked : attestedLike,
+          // When X can't read a mark (followUnsupported / likeUnsupported), send the checkbox attestation.
+          liked:
+            (oauth || bearer) && !current.likeUnsupported
+              ? current.liked
+              : attestedLike,
           retweeted: oauth || bearer ? current.retweeted : attestedRt,
           followed:
-            oauth || (bearer && !current.followUnsupported)
+            (oauth || bearer) && !current.followUnsupported
               ? current.followed
               : attestedFollow,
         }),
