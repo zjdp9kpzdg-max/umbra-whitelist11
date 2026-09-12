@@ -1,0 +1,217 @@
+import { NextResponse } from "next/server";
+import { upsertRegistration } from "@/lib/db";
+import { isBearerEnabled, isOauthEnabled } from "@/lib/env";
+import { honorUserId, normalizeHandle } from "@/lib/handle";
+import { publicState } from "@/lib/public-state";
+import { getSession, isConnected } from "@/lib/session";
+import {
+  refreshTwitterToken,
+  verifyEngagement,
+  verifyEngagementAppOnly,
+} from "@/lib/twitter";
+import { normalizeWallet } from "@/lib/wallet";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+async function confirmOauthEngagement(
+  session: Awaited<ReturnType<typeof getSession>>
+) {
+  if (!session.twitterUserId) {
+    throw new Error("Connect X before registration.");
+  }
+
+  try {
+    return await verifyEngagement(session.accessToken, session.twitterUserId);
+  } catch (err) {
+    if (err instanceof Error && err.name === "TwitterUnauthorized" && session.refreshToken) {
+      const token = await refreshTwitterToken(session.refreshToken);
+      session.accessToken = token.accessToken;
+      session.refreshToken = token.refreshToken;
+      return verifyEngagement(token.accessToken, session.twitterUserId);
+    }
+    throw err;
+  }
+}
+
+type Body = {
+  wallet?: string;
+  handle?: string;
+  liked?: boolean;
+  retweeted?: boolean;
+};
+
+export async function POST(request: Request) {
+  let body: Body = {};
+  try {
+    body = (await request.json()) as Body;
+  } catch {
+    body = {};
+  }
+
+  const wallet = normalizeWallet(body.wallet, { required: true });
+  if (!wallet.ok) {
+    return NextResponse.json({ error: wallet.error }, { status: 400 });
+  }
+  if (!wallet.address) {
+    return NextResponse.json(
+      { error: "An ETH wallet is required to petition." },
+      { status: 400 }
+    );
+  }
+
+  const session = await getSession();
+  const submittedAt = new Date().toISOString();
+
+  if (isOauthEnabled()) {
+    if (!isConnected(session) || !session.twitterUserId || !session.twitterHandle) {
+      return NextResponse.json(
+        { error: "Connect X before registration." },
+        { status: 401 }
+      );
+    }
+
+    try {
+      const engagement = await confirmOauthEngagement(session);
+      if (!engagement.liked || !engagement.retweeted) {
+        session.liked = engagement.liked;
+        session.retweeted = engagement.retweeted;
+        await session.save();
+        return NextResponse.json(
+          {
+            error: "Like and retweet the quest post, then verify again.",
+            liked: engagement.liked,
+            retweeted: engagement.retweeted,
+          },
+          { status: 403 }
+        );
+      }
+
+      await upsertRegistration({
+        twitterUserId: session.twitterUserId,
+        twitterHandle: session.twitterHandle,
+        walletAddress: wallet.address,
+        liked: true,
+        retweeted: true,
+        submittedAt,
+      });
+
+      session.liked = true;
+      session.retweeted = true;
+      session.likeUnsupported = false;
+      session.registered = true;
+      session.walletAddress = wallet.address;
+      await session.save();
+
+      return NextResponse.json(await publicState(session));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Registration failed.";
+      return NextResponse.json({ error: message }, { status: 502 });
+    }
+  }
+
+  if (isBearerEnabled()) {
+    const handle = normalizeHandle(body.handle || session.twitterHandle);
+    if (!handle.ok) {
+      return NextResponse.json({ error: handle.error }, { status: 400 });
+    }
+
+    try {
+      const engagement = await verifyEngagementAppOnly(handle.handle);
+      if (!engagement.retweeted) {
+        session.twitterUserId = engagement.userId;
+        session.twitterHandle = engagement.handle;
+        session.liked = engagement.liked;
+        session.retweeted = false;
+        session.likeUnsupported = Boolean(engagement.likeUnsupported);
+        await session.save();
+        return NextResponse.json(
+          {
+            error: "Retweet the quest post, then verify again.",
+            liked: engagement.liked,
+            retweeted: false,
+            likeUnsupported: engagement.likeUnsupported,
+          },
+          { status: 403 }
+        );
+      }
+
+      const liked =
+        engagement.liked || (Boolean(engagement.likeUnsupported) && Boolean(body.liked));
+      if (!liked) {
+        session.twitterUserId = engagement.userId;
+        session.twitterHandle = engagement.handle;
+        session.liked = engagement.liked;
+        session.retweeted = true;
+        session.likeUnsupported = Boolean(engagement.likeUnsupported);
+        await session.save();
+        return NextResponse.json(
+          {
+            error: engagement.likeUnsupported
+              ? "X does not allow app-only like reads. Mark that you liked the post."
+              : "Like the quest post, then verify again.",
+            liked: engagement.liked,
+            retweeted: true,
+            likeUnsupported: engagement.likeUnsupported,
+          },
+          { status: 403 }
+        );
+      }
+
+      await upsertRegistration({
+        twitterUserId: engagement.userId,
+        twitterHandle: engagement.handle,
+        walletAddress: wallet.address,
+        liked: true,
+        retweeted: true,
+        submittedAt,
+      });
+
+      session.twitterUserId = engagement.userId;
+      session.twitterHandle = engagement.handle;
+      session.liked = true;
+      session.retweeted = true;
+      session.likeUnsupported = Boolean(engagement.likeUnsupported);
+      session.registered = true;
+      session.walletAddress = wallet.address;
+      await session.save();
+
+      return NextResponse.json(await publicState(session));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Registration failed.";
+      return NextResponse.json({ error: message }, { status: 502 });
+    }
+  }
+
+  const handle = normalizeHandle(body.handle);
+  if (!handle.ok) {
+    return NextResponse.json({ error: handle.error }, { status: 400 });
+  }
+  if (!body.liked || !body.retweeted) {
+    return NextResponse.json(
+      { error: "Like and retweet the quest post, then mark both complete." },
+      { status: 403 }
+    );
+  }
+
+  const userId = honorUserId(handle.handle);
+  await upsertRegistration({
+    twitterUserId: userId,
+    twitterHandle: handle.handle,
+    walletAddress: wallet.address,
+    liked: true,
+    retweeted: true,
+    submittedAt,
+  });
+
+  session.twitterUserId = userId;
+  session.twitterHandle = handle.handle;
+  session.liked = true;
+  session.retweeted = true;
+  session.likeUnsupported = false;
+  session.registered = true;
+  session.walletAddress = wallet.address;
+  await session.save();
+
+  return NextResponse.json(await publicState(session));
+}
