@@ -663,8 +663,7 @@ export function QuestApp() {
             </a>
           </p>
           <p className="max-w-xl sm:text-right">
-            Art project. That&apos;s it. Not a stock token. Not equity. Minting on
-            Ethereum.
+            Not a stock token. Not equity. Minting on Ethereum.
           </p>
         </div>
       </footer>

@@ -30,7 +30,10 @@ export function SiteNav({ active }: { active?: "petition" | "status" }) {
           <RelicMark size={44} priority className="h-11 w-11 shrink-0" />
           <div>
             <p className="font-display text-2xl tracking-[0.34em] text-[#C9A227]">UMBRA</p>
-            <p className="mt-1 text-xs tracking-[0.18em] text-[#E8E0D4]/55 uppercase">
+            <p className="font-display mt-2 text-xl leading-tight tracking-[0.04em] text-[#E8E0D4] sm:text-2xl">
+              Art project. That&apos;s it.
+            </p>
+            <p className="mt-1.5 text-xs tracking-[0.18em] text-[#E8E0D4]/55 uppercase">
               Relics worn in shadow.
             </p>
           </div>
