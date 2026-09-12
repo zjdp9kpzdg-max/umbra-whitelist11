@@ -659,7 +659,7 @@ export function QuestApp() {
             </a>
           </p>
           <p className="max-w-xl sm:text-right">
-            UMBRA is an independent project. Not a stock token. Not equity. Minting on
+            Art project. That&apos;s it. Not a stock token. Not equity. Minting on
             Ethereum.
           </p>
         </div>

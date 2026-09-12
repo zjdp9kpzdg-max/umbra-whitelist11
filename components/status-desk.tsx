@@ -211,10 +211,10 @@ export function StatusDesk() {
           Read your place at the door.
         </h1>
         <p className="mt-3 max-w-md text-sm leading-6 text-[#E8E0D4]/60">
-          Umbra is the darkest part of a shadow. 1,111 wardens mint on Ethereum.
-          Petitions still require Connect X at the door. Here you can bind X, or leave the
-          handle you already petitioned with — under review, or on the list. Nothing here is
-          automatic favor.
+          Umbra is the darkest part of a shadow. Art project. That&apos;s it. 1,111
+          wardens mint on Ethereum. Petitions still require Connect X at the door. Here you
+          can bind X, or leave the handle you already petitioned with — under review, or on
+          the list. Nothing here is automatic favor.
         </p>
 
         {!ready ? (
