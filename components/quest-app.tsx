@@ -297,7 +297,9 @@ export function QuestApp() {
             <h1 className="font-display max-w-xl text-4xl leading-[1.15] text-[#E8E0D4] sm:text-5xl">
               After names became liabilities, an order bound identity into relics.
             </h1>
-            <p className="max-w-md text-base leading-7 text-[#E8E0D4]/70">
+            <p className="max-w-lg text-base leading-7 text-[#E8E0D4]/70">
+              Umbra is the darkest part of a shadow. Each binding is a mask, a key, and a face
+              you can wear without explaining yourself.{" "}
               {oauth
                 ? "Petition the Order. Bind your X. Follow, like, and retweet. Enter the ETH address at the door."
                 : "Petition the Order. Leave your X. Follow, like, and retweet. Enter the ETH address at the door."}{" "}
@@ -329,17 +331,17 @@ export function QuestApp() {
                 }
               >
                 {current.status === "approved"
-                  ? "On the list"
+                  ? "Marked"
                   : current.status === "rejected"
                     ? "Closed"
                     : "Under review"}
               </Badge>
               <h2 className="font-display mt-4 text-3xl text-[#E8E0D4]">
                 {current.status === "approved"
-                  ? "You're on the list."
+                  ? "The Order has marked this name."
                   : current.status === "rejected"
                     ? "This door does not open."
-                    : "Under review."}
+                    : "Your petition waits in the ledger."}
               </h2>
               <p className="mt-3 text-sm text-[#E8E0D4]/65">
                 @{current.handle}
@@ -347,10 +349,10 @@ export function QuestApp() {
               </p>
               <p className="mt-6 text-xs leading-6 text-[#E8E0D4]/45">
                 {current.status === "approved"
-                  ? "The Order has marked this name. Watch @" + UMBRA_X_HANDLE + "."
+                  ? "The door knows you. Watch @" + UMBRA_X_HANDLE + ". Selection still moves in silence."
                   : current.status === "rejected"
-                    ? "The petition was received and set aside."
-                    : "Your petition waits in the ledger. Selection is not guaranteed. Check Status anytime."}
+                    ? "The petition was received and set aside. The Order does not explain every closed door."
+                    : "Selection is not guaranteed. The Order reviews in silence. Check Status anytime."}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
@@ -383,7 +385,7 @@ export function QuestApp() {
                         <p className="mt-1 text-sm text-[#E8E0D4]/70">
                           {current.connected
                             ? `Bound as @${current.handle}.`
-                            : "Connect X. The handle becomes the name we keep."}
+                            : "Connect X. The handle is the name we keep in shadow."}
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2">
                           {current.connected ? (
@@ -456,7 +458,7 @@ export function QuestApp() {
                       02 · Follow · like · retweet
                     </p>
                     <p className="mt-1 text-sm text-[#E8E0D4]/70">
-                      Follow @{UMBRA_X_HANDLE}. Like the quest post. Retweet it. All three marks are required.
+                      Three marks at the door: follow @{UMBRA_X_HANDLE}, like the quest post, retweet it. All required.
                     </p>
                     {!current.targetTweetId && (
                       <p className="mt-3 text-xs text-[#C9A227]/80">
@@ -569,7 +571,7 @@ export function QuestApp() {
                       03 · Enter ETH address
                     </p>
                     <Label htmlFor="wallet" className="mt-1 text-sm font-normal text-[#E8E0D4]/70">
-                      Enter your ETH wallet address. Required. If you are chosen, this is the door we open.
+                      ETH wallet — required. If the Order marks you, this is the door we open. Not an automatic mint list.
                     </Label>
                     <Input
                       id="wallet"
@@ -598,7 +600,7 @@ export function QuestApp() {
                   onClick={register}
                   disabled={!canRegister || busy === "register"}
                 >
-                  {busy === "register" ? "Sending…" : "Submit your petition"}
+                  {busy === "register" ? "Sealing…" : "Seal your petition"}
                 </Button>
                 {!canRegister && (
                   <p className="mt-3 text-xs text-[#E8E0D4]/40">
@@ -644,7 +646,7 @@ export function QuestApp() {
       <footer className="mt-auto border-t border-[#C9A227]/15 px-5 py-6 sm:px-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 text-xs leading-6 text-[#E8E0D4]/40 sm:flex-row sm:items-start sm:justify-between">
           <p>
-            UMBRA. Relics worn in shadow.{" "}
+            UMBRA — the darkest part of a shadow. Relics worn in shadow.{" "}
             <a
               href={UMBRA_X_URL}
               target="_blank"

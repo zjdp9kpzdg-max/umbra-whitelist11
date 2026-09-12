@@ -19,22 +19,24 @@ const display = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "UMBRA Whitelist",
+  title: "UMBRA · Petition",
   description:
-    "Relics worn in shadow. Petition the Order. Watch @UMBRAStudio11.",
+    "Umbra — the darkest part of a shadow. Relics worn in shadow. Petition the Order. Watch @UMBRAStudio11.",
   icons: {
     icon: [{ url: "/brand/icon-180.png", type: "image/png" }],
     apple: [{ url: "/brand/icon-180.png" }],
   },
   openGraph: {
     title: "UMBRA",
-    description: "Relics worn in shadow. Petition the Order.",
+    description:
+      "Umbra — the darkest part of a shadow. Relics worn in shadow. Petition the Order.",
     images: [{ url: "/brand/x_banner.jpg", width: 1500, height: 500 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "UMBRA",
-    description: "Relics worn in shadow. Petition the Order.",
+    description:
+      "Umbra — the darkest part of a shadow. Relics worn in shadow. Petition the Order.",
     images: ["/brand/x_banner.jpg"],
   },
 };

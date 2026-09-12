@@ -36,21 +36,21 @@ function statusCopy(state: PublicState) {
     return {
       badge: "Sealed",
       title: "Bind your X to read the ledger.",
-      body: "Status is kept by the name you bind. Connect X to see if your petition waits, or if the door has opened.",
+      body: "The umbra keeps names by the face you bind. Connect X to see if your petition waits in shadow — or if the door has opened.",
     };
   }
   if (!state.submitted) {
     return {
       badge: "Empty",
       title: "No petition on file.",
-      body: `Bound as @${state.handle}. Leave a petition at the Index if you mean to be seen.`,
+      body: `Bound as @${state.handle}. Leave a petition if you mean to be seen. Selection is not automatic.`,
     };
   }
   if (state.status === "approved") {
     return {
-      badge: "On the list",
-      title: "You're on the list.",
-      body: "The Order has marked this name. The door knows you. Watch the signal — selection still moves in silence.",
+      badge: "Marked",
+      title: "The Order has marked this name.",
+      body: "The door knows you. Watch the signal. Selection still moves in silence — nothing here is automatic favor.",
     };
   }
   if (state.status === "rejected") {
@@ -62,8 +62,8 @@ function statusCopy(state: PublicState) {
   }
   return {
     badge: "Under review",
-    title: "Under review.",
-    body: "Your petition waits in the ledger. Selection is not guaranteed. The Order reviews in silence.",
+    title: "Your petition waits in the ledger.",
+    body: "Selection is not guaranteed. The Order reviews in silence. Relics worn in shadow.",
   };
 }
 
@@ -125,8 +125,8 @@ export function StatusDesk() {
           Read your place at the door.
         </h1>
         <p className="mt-3 max-w-md text-sm leading-6 text-[#E8E0D4]/60">
-          Petitions begin under review. If the Order chooses you, this page will say you&apos;re
-          on the list. Nothing here is automatic favor.
+          Umbra is the darkest part of a shadow. Petitions begin under review. If the Order
+          marks you, this page will say so. Nothing here is automatic favor.
         </p>
 
         {!ready ? (
@@ -176,7 +176,7 @@ export function StatusDesk() {
               </Link>
             </div>
             <p className="mt-6 text-xs text-[#E8E0D4]/40">
-              Watch @{UMBRA_X_HANDLE}. Relics worn in shadow.
+              Watch @{UMBRA_X_HANDLE}. Mask · key · face you can wear without explaining.
             </p>
           </div>
         )}

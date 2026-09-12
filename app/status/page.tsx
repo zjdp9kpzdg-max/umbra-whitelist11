@@ -3,7 +3,7 @@ import { StatusDesk } from "@/components/status-desk";
 
 export const metadata = {
   title: "UMBRA · Status",
-  description: "Read your petition status. Under review, or on the list.",
+  description: "Read your place at the door. Under review, or marked. The Order reviews in silence.",
 };
 
 function Fallback() {
