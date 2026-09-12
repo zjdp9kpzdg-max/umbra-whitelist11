@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { RelicMark } from "@/components/relic-mark";
 import { SiteNav } from "@/components/site-nav";
 import { Badge } from "@/components/ui/badge";
@@ -142,7 +142,6 @@ export function QuestApp() {
   const canRegister = identityReady && liked && retweeted && followed && walletCheck.ok;
   const canVerify = oauth ? current.connected : bearer && handleCheck.ok;
 
-  const tweetHref = useMemo(() => current.tweetUrl, [current.tweetUrl]);
 
   function validateWalletField(value: string) {
     const result = normalizeWallet(value, { required: true });
@@ -474,9 +473,6 @@ export function QuestApp() {
                       </TaskLink>
                       <TaskLink href={current.retweetUrl} disabled={!current.retweetUrl}>
                         Retweet
-                      </TaskLink>
-                      <TaskLink href={tweetHref} disabled={!tweetHref}>
-                        Open quest
                       </TaskLink>
                       {(oauth || bearer) && (
                         <Button
