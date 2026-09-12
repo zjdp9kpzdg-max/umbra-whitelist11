@@ -39,6 +39,7 @@ type Body = {
   handle?: string;
   liked?: boolean;
   retweeted?: boolean;
+  followed?: boolean;
 };
 
 export async function POST(request: Request) {
@@ -73,15 +74,22 @@ export async function POST(request: Request) {
 
     try {
       const engagement = await confirmOauthEngagement(session);
-      if (!engagement.liked || !engagement.retweeted) {
+      const followed =
+        engagement.followed ||
+        (Boolean(engagement.followUnsupported) && Boolean(body.followed));
+      if (!engagement.liked || !engagement.retweeted || !followed) {
         session.liked = engagement.liked;
         session.retweeted = engagement.retweeted;
+        session.followed = engagement.followed;
+        session.followUnsupported = Boolean(engagement.followUnsupported);
         await session.save();
         return NextResponse.json(
           {
-            error: "Like and retweet the quest post, then verify again.",
+            error: "Follow @UMBRAStudio11, like and retweet the quest post, then verify again.",
             liked: engagement.liked,
             retweeted: engagement.retweeted,
+            followed: engagement.followed,
+            followUnsupported: engagement.followUnsupported,
           },
           { status: 403 }
         );
@@ -98,7 +106,9 @@ export async function POST(request: Request) {
 
       session.liked = true;
       session.retweeted = true;
+      session.followed = true;
       session.likeUnsupported = false;
+      session.followUnsupported = false;
       session.registered = true;
       session.walletAddress = wallet.address;
       await session.save();
@@ -123,14 +133,18 @@ export async function POST(request: Request) {
         session.twitterHandle = engagement.handle;
         session.liked = engagement.liked;
         session.retweeted = false;
+        session.followed = engagement.followed;
         session.likeUnsupported = Boolean(engagement.likeUnsupported);
+        session.followUnsupported = Boolean(engagement.followUnsupported);
         await session.save();
         return NextResponse.json(
           {
             error: "Retweet the quest post, then verify again.",
             liked: engagement.liked,
             retweeted: false,
+            followed: engagement.followed,
             likeUnsupported: engagement.likeUnsupported,
+            followUnsupported: engagement.followUnsupported,
           },
           { status: 403 }
         );
@@ -143,7 +157,9 @@ export async function POST(request: Request) {
         session.twitterHandle = engagement.handle;
         session.liked = engagement.liked;
         session.retweeted = true;
+        session.followed = engagement.followed;
         session.likeUnsupported = Boolean(engagement.likeUnsupported);
+        session.followUnsupported = Boolean(engagement.followUnsupported);
         await session.save();
         return NextResponse.json(
           {
@@ -152,7 +168,36 @@ export async function POST(request: Request) {
               : "Like the quest post, then verify again.",
             liked: engagement.liked,
             retweeted: true,
+            followed: engagement.followed,
             likeUnsupported: engagement.likeUnsupported,
+            followUnsupported: engagement.followUnsupported,
+          },
+          { status: 403 }
+        );
+      }
+
+      const followed =
+        engagement.followed ||
+        (Boolean(engagement.followUnsupported) && Boolean(body.followed));
+      if (!followed) {
+        session.twitterUserId = engagement.userId;
+        session.twitterHandle = engagement.handle;
+        session.liked = true;
+        session.retweeted = true;
+        session.followed = engagement.followed;
+        session.likeUnsupported = Boolean(engagement.likeUnsupported);
+        session.followUnsupported = Boolean(engagement.followUnsupported);
+        await session.save();
+        return NextResponse.json(
+          {
+            error: engagement.followUnsupported
+              ? "Mark that you follow @UMBRAStudio11."
+              : "Follow @UMBRAStudio11, then verify again.",
+            liked: true,
+            retweeted: true,
+            followed: engagement.followed,
+            likeUnsupported: engagement.likeUnsupported,
+            followUnsupported: engagement.followUnsupported,
           },
           { status: 403 }
         );
@@ -171,7 +216,9 @@ export async function POST(request: Request) {
       session.twitterHandle = engagement.handle;
       session.liked = true;
       session.retweeted = true;
+      session.followed = true;
       session.likeUnsupported = Boolean(engagement.likeUnsupported);
+      session.followUnsupported = Boolean(engagement.followUnsupported);
       session.registered = true;
       session.walletAddress = wallet.address;
       await session.save();
@@ -187,9 +234,9 @@ export async function POST(request: Request) {
   if (!handle.ok) {
     return NextResponse.json({ error: handle.error }, { status: 400 });
   }
-  if (!body.liked || !body.retweeted) {
+  if (!body.liked || !body.retweeted || !body.followed) {
     return NextResponse.json(
-      { error: "Like and retweet the quest post, then mark both complete." },
+      { error: "Follow @UMBRAStudio11, like and retweet the quest post, then mark all complete." },
       { status: 403 }
     );
   }
@@ -208,7 +255,9 @@ export async function POST(request: Request) {
   session.twitterHandle = handle.handle;
   session.liked = true;
   session.retweeted = true;
+  session.followed = true;
   session.likeUnsupported = false;
+  session.followUnsupported = false;
   session.registered = true;
   session.walletAddress = wallet.address;
   await session.save();

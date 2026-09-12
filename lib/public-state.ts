@@ -8,6 +8,7 @@ import {
   tweetUrl,
 } from "@/lib/env";
 import { isConnected, type SessionData } from "@/lib/session";
+import { UMBRA_X_FOLLOW_URL } from "@/lib/brand";
 import type { PublicState } from "@/lib/types";
 
 export type { PublicState };
@@ -28,7 +29,10 @@ export async function publicState(session: SessionData): Promise<PublicState> {
     name: session.twitterName ?? null,
     liked: Boolean(session.liked || record?.liked),
     retweeted: Boolean(session.retweeted || record?.retweeted),
+    followed: Boolean(session.followed),
     likeUnsupported: Boolean(session.likeUnsupported),
+    followUnsupported: Boolean(session.followUnsupported),
+    followUrl: UMBRA_X_FOLLOW_URL,
     submitted: Boolean(session.registered || record),
     status: record?.status ?? (session.registered ? "pending" : null),
     walletAddress: session.walletAddress ?? record?.walletAddress ?? null,

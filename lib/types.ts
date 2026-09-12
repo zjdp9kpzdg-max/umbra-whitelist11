@@ -9,7 +9,10 @@ export type PublicState = {
   name: string | null;
   liked: boolean;
   retweeted: boolean;
+  followed: boolean;
   likeUnsupported: boolean;
+  followUnsupported: boolean;
+  followUrl: string;
   submitted: boolean;
   status: ApplicationStatus | null;
   walletAddress: string | null;

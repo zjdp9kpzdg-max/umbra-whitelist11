@@ -9,7 +9,7 @@ import {
 const AUTH_URL = "https://twitter.com/i/oauth2/authorize";
 const TOKEN_URL = "https://api.twitter.com/2/oauth2/token";
 const API = "https://api.twitter.com/2";
-const SCOPES = ["tweet.read", "users.read", "like.read", "offline.access"];
+const SCOPES = ["tweet.read", "users.read", "like.read", "follows.read", "offline.access"];
 const MAX_PAGES = 5;
 
 export type TwitterToken = {
@@ -247,10 +247,39 @@ export async function hasRetweetedTweet(
   );
 }
 
+
+export async function hasFollowedAccount(
+  accessToken: string,
+  userId: string,
+  targetUserId: string
+): Promise<boolean> {
+  const res = await fetch(
+    `${API}/users/${userId}/following/${targetUserId}`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: "no-store",
+    }
+  );
+  if (res.status === 404) return false;
+  if (res.status === 401 || res.status === 403) {
+    const err = new Error(await readError(res));
+    err.name = res.status === 401 ? "TwitterUnauthorized" : "TwitterForbidden";
+    throw err;
+  }
+  if (!res.ok) {
+    throw new Error(await readError(res));
+  }
+  const json = (await res.json()) as { data?: { following?: boolean; id?: string } };
+  if (json.data?.following === false) return false;
+  return Boolean(json.data);
+}
+
 export type Engagement = {
   liked: boolean;
   retweeted: boolean;
+  followed: boolean;
   likeUnsupported?: boolean;
+  followUnsupported?: boolean;
   userId?: string;
   handle?: string;
 };
@@ -267,12 +296,25 @@ export async function verifyEngagement(
     throw new Error("X session is missing an access token. Connect again.");
   }
 
+  const { UMBRA_X_USER_ID } = await import("@/lib/brand");
   const [liked, retweeted] = await Promise.all([
     hasLikedTweet(accessToken, userId, tweetId),
     hasRetweetedTweet(accessToken, userId, tweetId),
   ]);
 
-  return { liked, retweeted };
+  let followed = false;
+  let followUnsupported = false;
+  try {
+    followed = await hasFollowedAccount(accessToken, userId, UMBRA_X_USER_ID);
+  } catch (err) {
+    if (err instanceof Error && err.name === "TwitterForbidden") {
+      followUnsupported = true;
+    } else {
+      throw err;
+    }
+  }
+
+  return { liked, retweeted, followed, followUnsupported };
 }
 
 export async function lookupUserByHandle(
@@ -336,6 +378,8 @@ export async function verifyEngagementAppOnly(
     return {
       liked,
       retweeted,
+      followed: false,
+      followUnsupported: true,
       likeUnsupported: false,
       userId: profile.id,
       handle: profile.username,
@@ -345,6 +389,8 @@ export async function verifyEngagementAppOnly(
       return {
         liked: false,
         retweeted,
+        followed: false,
+        followUnsupported: true,
         likeUnsupported: true,
         userId: profile.id,
         handle: profile.username,

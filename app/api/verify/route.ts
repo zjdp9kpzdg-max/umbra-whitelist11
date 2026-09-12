@@ -24,12 +24,16 @@ async function verifyWithOauth(session: Awaited<ReturnType<typeof getSession>>) 
     const result = await verifyEngagement(session.accessToken, session.twitterUserId);
     session.liked = result.liked;
     session.retweeted = result.retweeted;
+    session.followed = result.followed;
     session.likeUnsupported = false;
+    session.followUnsupported = Boolean(result.followUnsupported);
     await session.save();
     return NextResponse.json({
       ...(await publicState(session)),
       liked: result.liked,
       retweeted: result.retweeted,
+      followed: result.followed,
+      followUnsupported: result.followUnsupported,
     });
   } catch (err) {
     if (err instanceof Error && err.name === "TwitterUnauthorized" && session.refreshToken) {
@@ -40,12 +44,16 @@ async function verifyWithOauth(session: Awaited<ReturnType<typeof getSession>>) 
         const result = await verifyEngagement(token.accessToken, session.twitterUserId);
         session.liked = result.liked;
         session.retweeted = result.retweeted;
+        session.followed = result.followed;
         session.likeUnsupported = false;
+        session.followUnsupported = Boolean(result.followUnsupported);
         await session.save();
         return NextResponse.json({
           ...(await publicState(session)),
           liked: result.liked,
           retweeted: result.retweeted,
+          followed: result.followed,
+          followUnsupported: result.followUnsupported,
         });
       } catch (refreshErr) {
         const message =
@@ -77,24 +85,33 @@ async function verifyWithBearer(
     session.twitterHandle = result.handle;
     session.liked = result.liked;
     session.retweeted = result.retweeted;
+    session.followed = Boolean(result.followed);
     session.likeUnsupported = Boolean(result.likeUnsupported);
+    session.followUnsupported = Boolean(result.followUnsupported);
     await session.save();
 
-    if (!result.liked || !result.retweeted) {
+    if (!result.liked || !result.retweeted || !result.followed) {
       const missing = [
+        !result.followed && !result.followUnsupported ? "follow" : null,
         !result.liked && !result.likeUnsupported ? "like" : null,
         !result.retweeted ? "retweet" : null,
+      ].filter(Boolean);
+      const attestHints = [
+        result.followUnsupported && !result.followed ? "mark that you follow" : null,
+        result.likeUnsupported && !result.liked ? "mark the like box" : null,
       ].filter(Boolean);
       return NextResponse.json({
         ...(await publicState(session)),
         liked: result.liked,
         retweeted: result.retweeted,
+        followed: result.followed,
         likeUnsupported: result.likeUnsupported,
+        followUnsupported: result.followUnsupported,
         error:
           missing.length > 0
-            ? `The ${missing.join(" and ")} ${missing.length === 1 ? "is" : "are"} not on the quest post yet.`
-            : result.likeUnsupported
-              ? "Retweet checked. X does not allow app-only like reads — mark the like box."
+            ? `The ${missing.join(" and ")} ${missing.length === 1 ? "is" : "are"} not confirmed yet.`
+            : attestHints.length > 0
+              ? `Checked what we can. Please ${attestHints.join(" and ")}.`
               : undefined,
       });
     }

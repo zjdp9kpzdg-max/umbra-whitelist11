@@ -25,7 +25,10 @@ const emptyState: PublicState = {
   name: null,
   liked: false,
   retweeted: false,
+  followed: false,
   likeUnsupported: false,
+  followUnsupported: false,
+  followUrl: "https://x.com/intent/follow?screen_name=UMBRAStudio11",
   submitted: false,
   status: null,
   walletAddress: null,
@@ -82,6 +85,7 @@ export function QuestApp() {
   const [handleError, setHandleError] = useState<string | null>(null);
   const [attestedLike, setAttestedLike] = useState(false);
   const [attestedRt, setAttestedRt] = useState(false);
+  const [attestedFollow, setAttestedFollow] = useState(false);
   const [wallet, setWallet] = useState("");
   const [walletError, setWalletError] = useState<string | null>(null);
   const [busy, setBusy] = useState<"verify" | "register" | "logout" | null>(null);
@@ -104,6 +108,7 @@ export function QuestApp() {
         if (data.handle) setHandle(data.handle);
         if (data.liked) setAttestedLike(true);
         if (data.retweeted) setAttestedRt(true);
+        if (data.followed) setAttestedFollow(true);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -128,8 +133,13 @@ export function QuestApp() {
       ? current.liked || (current.likeUnsupported && attestedLike)
       : attestedLike;
   const retweeted = oauth || bearer ? current.retweeted : attestedRt;
+  const followed = oauth
+    ? current.followed || (current.followUnsupported && attestedFollow)
+    : bearer
+      ? current.followed || (current.followUnsupported && attestedFollow)
+      : attestedFollow;
   const identityReady = oauth ? current.connected : handleCheck.ok;
-  const canRegister = identityReady && liked && retweeted && walletCheck.ok;
+  const canRegister = identityReady && liked && retweeted && followed && walletCheck.ok;
   const canVerify = oauth ? current.connected : bearer && handleCheck.ok;
 
   const tweetHref = useMemo(() => current.tweetUrl, [current.tweetUrl]);
@@ -170,8 +180,28 @@ export function QuestApp() {
       setState(data);
       if (data.error) {
         setError(data.error);
-      } else if (!data.liked || !data.retweeted) {
-        setError("The marks are incomplete. Like and retweet the quest post to continue.");
+      } else if (
+        !data.liked ||
+        !data.retweeted ||
+        (!data.followed && !data.followUnsupported)
+      ) {
+        const missing = [
+          !data.followed && !data.followUnsupported ? "follow" : null,
+          !data.liked ? "like" : null,
+          !data.retweeted ? "retweet" : null,
+        ].filter(Boolean);
+        if (missing.length > 0) {
+          const label = missing.join(", ");
+          setError(
+            `The marks are incomplete. ${label.charAt(0).toUpperCase()}${label.slice(1)} still waiting.`
+          );
+        } else if (data.followUnsupported && !data.followed) {
+          setError("Follow could not be read by X — mark that you follow @UMBRAStudio11.");
+        }
+      } else if (data.followed || data.liked) {
+        if (data.followed) setAttestedFollow(true);
+        if (data.liked) setAttestedLike(true);
+        if (data.retweeted) setAttestedRt(true);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed.");
@@ -194,14 +224,28 @@ export function QuestApp() {
           handle,
           liked: oauth || (bearer && !current.likeUnsupported) ? current.liked : attestedLike,
           retweeted: oauth || bearer ? current.retweeted : attestedRt,
+          followed:
+            oauth || (bearer && !current.followUnsupported)
+              ? current.followed
+              : attestedFollow,
         }),
       });
       const data = (await res.json()) as PublicState & { error?: string };
       if (!res.ok) {
-        if (typeof data.liked === "boolean" || typeof data.retweeted === "boolean") {
+        if (
+          typeof data.liked === "boolean" ||
+          typeof data.retweeted === "boolean" ||
+          typeof data.followed === "boolean"
+        ) {
           setState((prev) =>
             prev
-              ? { ...prev, liked: data.liked ?? prev.liked, retweeted: data.retweeted ?? prev.retweeted }
+              ? {
+                  ...prev,
+                  liked: data.liked ?? prev.liked,
+                  retweeted: data.retweeted ?? prev.retweeted,
+                  followed: data.followed ?? prev.followed,
+                  followUnsupported: data.followUnsupported ?? prev.followUnsupported,
+                }
               : prev
           );
         }
@@ -228,6 +272,8 @@ export function QuestApp() {
       name: null,
       liked: false,
       retweeted: false,
+      followed: false,
+      followUnsupported: false,
       submitted: false,
       status: null,
       walletAddress: null,
@@ -236,6 +282,7 @@ export function QuestApp() {
     setWallet("");
     setAttestedLike(false);
     setAttestedRt(false);
+    setAttestedFollow(false);
     setBusy(null);
   }
 
@@ -254,9 +301,9 @@ export function QuestApp() {
             </h1>
             <p className="max-w-md text-base leading-7 text-[#E8E0D4]/70">
               {oauth
-                ? "Petition the Order. Bind your X. Like and retweet the quest post. Enter the ETH address at the door."
-                : "Petition the Order. Leave your X. Like and retweet the quest post. Enter the ETH address at the door."}{" "}
-              Follow @{UMBRA_X_HANDLE}. Selection is not guaranteed.
+                ? "Petition the Order. Bind your X. Follow, like, and retweet. Enter the ETH address at the door."
+                : "Petition the Order. Leave your X. Follow, like, and retweet. Enter the ETH address at the door."}{" "}
+              Selection is not guaranteed.
             </p>
           </div>
 
@@ -405,32 +452,23 @@ export function QuestApp() {
                 </li>
 
                 <li className="flex gap-4">
-                  <Mark done={liked && retweeted} />
+                  <Mark done={followed && liked && retweeted} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[11px] tracking-[0.22em] text-[#C9A227] uppercase">
-                      02 · Like and retweet
+                      02 · Follow · like · retweet
                     </p>
                     <p className="mt-1 text-sm text-[#E8E0D4]/70">
-                      Like the quest post. Retweet it. Both marks are required.
+                      Follow @{UMBRA_X_HANDLE}. Like the quest post. Retweet it. All three marks are required.
                     </p>
                     {!current.targetTweetId && (
                       <p className="mt-3 text-xs text-[#C9A227]/80">
                         The quest post is waking. Watch @{UMBRA_X_HANDLE}.
                       </p>
                     )}
-                    <p className="mt-2 text-xs text-[#E8E0D4]/45">
-                      Follow{" "}
-                      <a
-                        href={UMBRA_X_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-[#C9A227]/80 hover:text-[#C9A227]"
-                      >
-                        @{UMBRA_X_HANDLE}
-                      </a>
-                      .
-                    </p>
                     <div className="mt-3 flex flex-wrap gap-2">
+                      <TaskLink href={current.followUrl} disabled={!current.followUrl}>
+                        Follow @{UMBRA_X_HANDLE}
+                      </TaskLink>
                       <TaskLink href={current.likeUrl} disabled={!current.likeUrl}>
                         Like
                       </TaskLink>
@@ -446,15 +484,29 @@ export function QuestApp() {
                           onClick={verify}
                           disabled={!canVerify || busy === "verify"}
                         >
-                          {busy === "verify" ? "Reading the marks…" : "Verify like & retweet"}
+                          {busy === "verify" ? "Reading the marks…" : "Verify marks"}
                         </Button>
                       )}
                     </div>
                     {(oauth || bearer) && (
                       <ul className="mt-3 space-y-2 text-sm text-[#E8E0D4]/80">
                         <li className="flex items-center gap-2">
-                          <Mark done={current.liked} />
-                          Like {current.liked ? "seen" : current.likeUnsupported ? "unreadable here" : "waiting"}
+                          <Mark done={followed} />
+                          Follow{" "}
+                          {followed
+                            ? "seen"
+                            : current.followUnsupported
+                              ? "attest below"
+                              : "waiting"}
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Mark done={current.liked || liked} />
+                          Like{" "}
+                          {current.liked
+                            ? "seen"
+                            : current.likeUnsupported
+                              ? "unreadable here"
+                              : "waiting"}
                         </li>
                         <li className="flex items-center gap-2">
                           <Mark done={current.retweeted} />
@@ -462,17 +514,30 @@ export function QuestApp() {
                         </li>
                       </ul>
                     )}
-                    {!oauth && (!bearer || current.likeUnsupported) && (
+                    {!oauth && (
                       <div className="mt-4 space-y-2 text-sm text-[#E8E0D4]/80">
-                        <label className="flex cursor-pointer items-center gap-3">
-                          <input
-                            type="checkbox"
-                            checked={attestedLike}
-                            onChange={(e) => setAttestedLike(e.target.checked)}
-                            className="size-4 accent-[#1F6B4A]"
-                          />
-                          I liked the quest post.
-                        </label>
+                        {(!bearer || current.followUnsupported) && (
+                          <label className="flex cursor-pointer items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={attestedFollow}
+                              onChange={(e) => setAttestedFollow(e.target.checked)}
+                              className="size-4 accent-[#1F6B4A]"
+                            />
+                            I follow @{UMBRA_X_HANDLE}.
+                          </label>
+                        )}
+                        {(!bearer || current.likeUnsupported) && (
+                          <label className="flex cursor-pointer items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={attestedLike}
+                              onChange={(e) => setAttestedLike(e.target.checked)}
+                              className="size-4 accent-[#1F6B4A]"
+                            />
+                            I liked the quest post.
+                          </label>
+                        )}
                         {!bearer && (
                           <label className="flex cursor-pointer items-center gap-3">
                             <input
@@ -484,6 +549,19 @@ export function QuestApp() {
                             I retweeted the quest post.
                           </label>
                         )}
+                      </div>
+                    )}
+                    {oauth && current.followUnsupported && (
+                      <div className="mt-4 space-y-2 text-sm text-[#E8E0D4]/80">
+                        <label className="flex cursor-pointer items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={attestedFollow}
+                            onChange={(e) => setAttestedFollow(e.target.checked)}
+                            className="size-4 accent-[#1F6B4A]"
+                          />
+                          I follow @{UMBRA_X_HANDLE}.
+                        </label>
                       </div>
                     )}
                   </div>
@@ -530,10 +608,8 @@ export function QuestApp() {
                 {!canRegister && (
                   <p className="mt-3 text-xs text-[#E8E0D4]/40">
                     {oauth
-                      ? "Bind X, like and retweet, then enter a valid ETH address."
-                      : bearer
-                        ? "Leave your X, like and retweet, then enter a valid ETH address."
-                        : "Leave your X, like and retweet, then enter a valid ETH address."}
+                      ? "Bind X, follow · like · retweet, then enter a valid ETH address."
+                      : "Leave your X, follow · like · retweet, then enter a valid ETH address."}
                   </p>
                 )}
               </div>

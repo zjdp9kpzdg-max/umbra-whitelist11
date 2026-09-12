@@ -10,6 +10,8 @@ export type SessionData = {
   refreshToken?: string;
   liked?: boolean;
   retweeted?: boolean;
+  followed?: boolean;
+  followUnsupported?: boolean;
   registered?: boolean;
   walletAddress?: string;
   likeUnsupported?: boolean;
