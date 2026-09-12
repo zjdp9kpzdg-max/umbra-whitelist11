@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { RelicMark } from "@/components/relic-mark";
@@ -76,8 +75,7 @@ function TaskLink({
 }
 
 export function QuestApp() {
-  const pathname = usePathname();
-  const navActive = pathname?.startsWith("/whitelist") ? "petition" : "index";
+  const navActive = "petition" as const;
   const searchParams = useSearchParams();
   const [state, setState] = useState<PublicState | null>(null);
   const [handle, setHandle] = useState("");

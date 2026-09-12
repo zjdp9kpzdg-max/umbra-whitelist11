@@ -1,15 +1,11 @@
 import Link from "next/link";
 import { RelicMark } from "@/components/relic-mark";
 
-export function SiteNav({ active }: { active?: "index" | "status" | "petition" }) {
+export function SiteNav({ active }: { active?: "petition" | "status" }) {
   const link = (href: string, key: typeof active, label: string) => (
     <Link
       href={href}
-      className={
-        active === key
-          ? "text-[#C9A227]"
-          : "hover:text-[#C9A227]"
-      }
+      className={active === key ? "text-[#C9A227]" : "hover:text-[#C9A227]"}
     >
       {label}
     </Link>
@@ -27,9 +23,8 @@ export function SiteNav({ active }: { active?: "index" | "status" | "petition" }
         </div>
       </Link>
       <nav className="flex items-center gap-4 text-[11px] tracking-[0.2em] text-[#E8E0D4]/50 uppercase">
-        {link("/", "index", "Index")}
+        {link("/", "petition", "Petition")}
         {link("/status", "status", "Status")}
-        {link("/whitelist", "petition", "Petition")}
       </nav>
     </header>
   );

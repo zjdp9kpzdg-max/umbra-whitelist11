@@ -169,7 +169,7 @@ export function StatusDesk() {
                   "rounded-none border-[#C9A227]/40"
                 )}
               >
-                {state.submitted ? "Return to Index" : "Leave a petition"}
+                {state.submitted ? "Return to Petition" : "Leave a petition"}
               </Link>
             </div>
             <p className="mt-6 text-xs text-[#E8E0D4]/40">
