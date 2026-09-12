@@ -468,11 +468,11 @@ export function QuestApp() {
                       <TaskLink href={current.followUrl} disabled={!current.followUrl}>
                         Follow @{UMBRA_X_HANDLE}
                       </TaskLink>
-                      <TaskLink href={current.likeUrl} disabled={!current.likeUrl}>
-                        Like
-                      </TaskLink>
-                      <TaskLink href={current.retweetUrl} disabled={!current.retweetUrl}>
-                        Retweet
+                      <TaskLink
+                        href={current.tweetUrl || current.likeUrl}
+                        disabled={!current.tweetUrl && !current.likeUrl}
+                      >
+                        Like · retweet
                       </TaskLink>
                       {(oauth || bearer) && (
                         <Button
