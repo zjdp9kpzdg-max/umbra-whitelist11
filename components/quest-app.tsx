@@ -484,7 +484,7 @@ export function QuestApp() {
                           onClick={verify}
                           disabled={!canVerify || busy === "verify"}
                         >
-                          {busy === "verify" ? "Verifying…" : "Verify follow, like, retweet"}
+                          {busy === "verify" ? "Reading the marks…" : "Verify follow · like · retweet"}
                         </Button>
                       )}
                     </div>
