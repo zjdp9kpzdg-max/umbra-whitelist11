@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { RelicMark } from "@/components/relic-mark";
+import { SiteNav } from "@/components/site-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,6 +76,8 @@ function TaskLink({
 }
 
 export function QuestApp() {
+  const pathname = usePathname();
+  const navActive = pathname?.startsWith("/whitelist") ? "petition" : "index";
   const searchParams = useSearchParams();
   const [state, setState] = useState<PublicState | null>(null);
   const [handle, setHandle] = useState("");
@@ -239,34 +243,13 @@ export function QuestApp() {
 
   return (
     <div className="relative z-50 flex min-h-full flex-1 flex-col">
-      <header className="mx-auto flex w-full max-w-6xl items-end justify-between gap-6 px-5 py-6 sm:px-8">
-        <div className="flex items-center gap-3">
-          <RelicMark size={44} priority className="h-11 w-11 shrink-0" />
-          <div>
-            <p className="font-display text-2xl tracking-[0.34em] text-[#C9A227]">UMBRA</p>
-            <p className="mt-1 text-xs tracking-[0.18em] text-[#E8E0D4]/55 uppercase">
-              Relics worn in shadow.
-            </p>
-          </div>
-        </div>
-        <nav className="flex items-center gap-4 text-[11px] tracking-[0.2em] text-[#E8E0D4]/50 uppercase">
-          <Link href="/" className="hover:text-[#C9A227]">
-            Index
-          </Link>
-          <Link href="/list" className="hover:text-[#C9A227]">
-            List
-          </Link>
-          <Link href="/whitelist" className="hover:text-[#C9A227]">
-            Whitelist
-          </Link>
-        </nav>
-      </header>
+      <SiteNav active={navActive} />
 
       <main className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 items-center gap-12 px-5 pb-16 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
         <section className="space-y-8">
           <div className="space-y-5">
             <p className="text-[11px] tracking-[0.32em] text-[#C9A227] uppercase">
-              Whitelist // 001
+              Petition // 001
             </p>
             <h1 className="font-display max-w-xl text-4xl leading-[1.15] text-[#E8E0D4] sm:text-5xl">
               After names became liabilities, an order bound identity into relics.
@@ -284,32 +267,64 @@ export function QuestApp() {
           )}
 
           {ready && current.submitted ? (
-            <div className="border border-[#1F6B4A]/50 bg-[#1F6B4A]/10 p-6 sm:p-8">
-              <Badge className="rounded-none border-[#1F6B4A] bg-[#1F6B4A] text-[#E8E0D4]">
+            <div
+              className={
+                current.status === "approved"
+                  ? "border border-[#1F6B4A]/50 bg-[#1F6B4A]/10 p-6 sm:p-8"
+                  : current.status === "rejected"
+                    ? "border border-[#8F3A32]/40 bg-[#8F3A32]/10 p-6 sm:p-8"
+                    : "border border-[#C9A227]/30 bg-[#C9A227]/5 p-6 sm:p-8"
+              }
+            >
+              <Badge
+                className={
+                  current.status === "approved"
+                    ? "rounded-none border-[#1F6B4A] bg-[#1F6B4A] text-[#E8E0D4]"
+                    : current.status === "rejected"
+                      ? "rounded-none border-[#8F3A32] bg-[#8F3A32]/30 text-[#E8C4BC]"
+                      : "rounded-none border-[#C9A227]/50 bg-[#C9A227]/15 text-[#C9A227]"
+                }
+              >
                 {current.status === "approved"
-                  ? "Seen"
+                  ? "On the list"
                   : current.status === "rejected"
                     ? "Closed"
-                    : "Pending"}
+                    : "Under review"}
               </Badge>
               <h2 className="font-display mt-4 text-3xl text-[#E8E0D4]">
-                Your petition was received. Selection is not guaranteed.
+                {current.status === "approved"
+                  ? "You're on the list."
+                  : current.status === "rejected"
+                    ? "This door does not open."
+                    : "Under review."}
               </h2>
               <p className="mt-3 text-sm text-[#E8E0D4]/65">
                 @{current.handle}
                 {current.walletAddress ? ` · ${current.walletAddress}` : ""}
               </p>
               <p className="mt-6 text-xs leading-6 text-[#E8E0D4]/45">
-                The Order reviews in silence. Watch @{UMBRA_X_HANDLE}.
+                {current.status === "approved"
+                  ? "The Order has marked this name. Watch @" + UMBRA_X_HANDLE + "."
+                  : current.status === "rejected"
+                    ? "The petition was received and set aside."
+                    : "Your petition waits in the ledger. Selection is not guaranteed. Check Status anytime."}
               </p>
-              <Button
-                variant="outline"
-                className="mt-6 rounded-none border-[#C9A227]/40"
-                onClick={logout}
-                disabled={busy === "logout"}
-              >
-                Close
-              </Button>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/status"
+                  className="inline-flex h-9 items-center rounded-none border border-[#C9A227]/40 px-4 text-sm text-[#E8E0D4] hover:border-[#C9A227]"
+                >
+                  Check status
+                </Link>
+                <Button
+                  variant="outline"
+                  className="rounded-none border-[#C9A227]/40"
+                  onClick={logout}
+                  disabled={busy === "logout"}
+                >
+                  Close
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="border border-[#C9A227]/25 bg-[#0C0C11]/80 p-6 sm:p-8">
