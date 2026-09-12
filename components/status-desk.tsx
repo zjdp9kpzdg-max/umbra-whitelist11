@@ -211,8 +211,9 @@ export function StatusDesk() {
           Read your place at the door.
         </h1>
         <p className="mt-3 max-w-md text-sm leading-6 text-[#E8E0D4]/60">
-          Umbra is the darkest part of a shadow. Bind your X, or leave the handle you
-          petitioned with — under review, or on the list. Nothing here is automatic favor.
+          Umbra is the darkest part of a shadow. Petitions still require Connect X at the
+          door. Here you can bind X, or leave the handle you already petitioned with — under
+          review, or on the list. Nothing here is automatic favor.
         </p>
 
         {!ready ? (
@@ -235,7 +236,7 @@ export function StatusDesk() {
                   Or leave the handle
                 </p>
                 <Label htmlFor="status-handle" className="mt-2 text-sm font-normal text-[#E8E0D4]/70">
-                  If Connect X will not open, enter the X handle from your petition.
+                  Status only — if Connect X will not open here, enter the handle from your petition. New petitions still require Connect X.
                 </Label>
                 <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Input
