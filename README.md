@@ -10,7 +10,7 @@ Official X: [@UMBRAStudio11](https://x.com/UMBRAStudio11)
 
 End users never enter API keys. There is no secrets field in the UI. Tokens live only in `.env.local` or the host’s project settings (for example Vercel). Do not paste Twitter keys into chat with an assistant.
 
-UMBRA is an independent project. Not affiliated with Robinhood Markets, Inc., its affiliates, or its products.
+UMBRA is an independent project. Minting on Ethereum mainnet.
 
 ## Visitor flow
 
