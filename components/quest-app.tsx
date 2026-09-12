@@ -402,8 +402,7 @@ export function QuestApp() {
                     </p>
                     {!current.targetTweetId && (
                       <p className="mt-3 text-xs text-[#C9A227]/80">
-                        The quest post is not lit yet. Watch @{UMBRA_X_HANDLE} for the
-                        Coming Soon signal. Owner: set TARGET_TWEET_ID when it is live.
+                        The quest post is waking. Watch @{UMBRA_X_HANDLE}.
                       </p>
                     )}
                     <p className="mt-2 text-xs text-[#E8E0D4]/45">
