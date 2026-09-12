@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
@@ -621,15 +620,20 @@ export function QuestApp() {
 
         <aside className="relative flex items-center justify-center lg:min-h-[520px]">
           <div className="absolute inset-10 bg-[#1F6B4A]/10 blur-3xl" />
-          <div className="relative w-full max-w-[420px]">
-            <Image
-              src="/brand/hero_warden.png"
-              alt="UMBRA warden"
-              width={800}
-              height={800}
-              priority
-              className="relative w-full"
-            />
+          <div className="relative w-full max-w-[480px]">
+            <div className="relative aspect-square overflow-hidden border border-[#C9A227]/25 bg-[#07070A] shadow-[0_0_60px_rgba(7,7,10,0.85)]">
+              <video
+                className="relative h-full w-full object-cover"
+                src="/brand/umbra_glitch_lore.mp4"
+                poster="/brand/umbra_glitch_lore_poster.jpg"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-label="UMBRA — names became liabilities; relics worn in shadow"
+              />
+            </div>
             <div className="pointer-events-none absolute -bottom-3 -right-3 sm:bottom-4 sm:right-4">
               <RelicMark size={88} className="h-16 w-16 sm:h-20 sm:w-20 drop-shadow-[0_0_18px_rgba(7,7,10,0.9)]" />
             </div>
