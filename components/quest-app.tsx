@@ -300,7 +300,7 @@ export function QuestApp() {
             <p className="max-w-lg text-base leading-7 text-[#E8E0D4]/70">
               Umbra is the darkest part of a shadow. Each binding is a mask, a key, and a face
               you can wear without explaining yourself. One thousand one hundred eleven nocturnal
-              wardens — minting on Robinhood Chain.{" "}
+              wardens — minting on Ethereum.{" "}
               {oauth
                 ? "Petition the Order. Bind your X. Follow, like, and retweet. Enter the ETH address at the door."
                 : "Petition the Order. Leave your X. Follow, like, and retweet. Enter the ETH address at the door."}{" "}
@@ -648,7 +648,7 @@ export function QuestApp() {
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 text-xs leading-6 text-[#E8E0D4]/40 sm:flex-row sm:items-start sm:justify-between">
           <p>
             UMBRA — the darkest part of a shadow. Relics worn in shadow. 1,111 nocturnal
-            wardens minting on Robinhood Chain.{" "}
+            wardens minting on Ethereum.{" "}
             <a
               href={UMBRA_X_URL}
               target="_blank"
@@ -661,7 +661,7 @@ export function QuestApp() {
           <p className="max-w-xl sm:text-right">
             UMBRA is an independent project. Not a stock token. Not equity. Not affiliated
             with Robinhood Markets, Inc., its affiliates, or its products. Minting on
-            Robinhood Chain — an Ethereum-layer chain.
+            Ethereum.
           </p>
         </div>
       </footer>
