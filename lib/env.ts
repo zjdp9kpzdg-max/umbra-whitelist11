@@ -1,3 +1,5 @@
+import { UMBRA_X_HANDLE } from "@/lib/brand";
+
 function read(name: string): string {
   // Dynamic lookup so a local `next build` cannot inline empty Twitter keys
   // into the serverless bundle. Vercel Production env is read at runtime.
@@ -56,11 +58,13 @@ export function isBearerEnabled(): boolean {
 
 export function tweetUrl(tweetId = getTargetTweetId()): string | null {
   if (!tweetId) return null;
-  return `https://x.com/i/web/status/${tweetId}`;
+  // Prefer handle/status — /i/web/status often fails to open the post on mobile web.
+  return `https://x.com/${UMBRA_X_HANDLE}/status/${tweetId}`;
 }
 
 export function tweetLikeUrl(tweetId = getTargetTweetId()): string | null {
   if (!tweetId) return null;
+  // Intent can 403 / blank on some mobile browsers — fall back UX opens the status.
   return `https://x.com/intent/like?tweet_id=${tweetId}`;
 }
 
