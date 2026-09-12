@@ -305,7 +305,7 @@ export function StatusDesk() {
               </Link>
             </div>
             <p className="mt-6 text-xs text-[#E8E0D4]/40">
-              Watch @{UMBRA_X_HANDLE}. Mask · key · face you can wear without explaining.
+              Watch @{UMBRA_X_HANDLE}.
             </p>
           </div>
         )}
