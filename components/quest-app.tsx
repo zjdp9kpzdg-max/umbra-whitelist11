@@ -169,7 +169,7 @@ export function QuestApp() {
       if (data.error) {
         setError(data.error);
       } else if (!data.liked || !data.retweeted) {
-        setError("The marks are incomplete. Like and retweet the quest post.");
+        setError("The marks are incomplete. Like and retweet the quest post to continue.");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed.");
@@ -273,8 +273,8 @@ export function QuestApp() {
             </h1>
             <p className="max-w-md text-base leading-7 text-[#E8E0D4]/70">
               {oauth
-                ? "Petition the Order. Connect X. Like + RT the quest post. Leave the wallet at the door."
-                : "Petition the Order. Like + RT the quest post. Leave your X handle and the wallet at the door."}{" "}
+                ? "Petition the Order. Bind your X. Like and retweet the quest post. Enter the ETH address at the door."
+                : "Petition the Order. Leave your X. Like and retweet the quest post. Enter the ETH address at the door."}{" "}
               Follow @{UMBRA_X_HANDLE}. Selection is not guaranteed.
             </p>
           </div>
@@ -318,14 +318,14 @@ export function QuestApp() {
                   <Mark done={identityReady} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[11px] tracking-[0.22em] text-[#C9A227] uppercase">
-                      01 · {oauth ? "Connect X" : "Your X"}
+                      01 · {oauth ? "Bind your X" : "Leave your X"}
                     </p>
                     {oauth ? (
                       <>
                         <p className="mt-1 text-sm text-[#E8E0D4]/70">
                           {current.connected
                             ? `Bound as @${current.handle}.`
-                            : "The handle becomes the name we keep."}
+                            : "Connect X. The handle becomes the name we keep."}
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2">
                           {current.connected ? (
@@ -353,7 +353,7 @@ export function QuestApp() {
                     ) : (
                       <>
                         <Label htmlFor="handle" className="mt-1 text-sm font-normal text-[#E8E0D4]/70">
-                          Your X handle. Required.
+                          Enter your X handle. Required.
                         </Label>
                         <Input
                           id="handle"
@@ -395,15 +395,15 @@ export function QuestApp() {
                   <Mark done={liked && retweeted} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[11px] tracking-[0.22em] text-[#C9A227] uppercase">
-                      02 · Mark the post
+                      02 · Like and retweet
                     </p>
                     <p className="mt-1 text-sm text-[#E8E0D4]/70">
-                      Like the quest post. Retweet the same post.
+                      Like the quest post. Retweet it. Both marks are required.
                     </p>
                     {!current.targetTweetId && (
                       <p className="mt-3 text-xs text-[#C9A227]/80">
-                        Quest post is not set. Watch @{UMBRA_X_HANDLE} for the Coming
-                        Soon RT. Owner: add TARGET_TWEET_ID in hosting when it is live.
+                        The quest post is not lit yet. Watch @{UMBRA_X_HANDLE} for the
+                        Coming Soon signal. Owner: set TARGET_TWEET_ID when it is live.
                       </p>
                     )}
                     <p className="mt-2 text-xs text-[#E8E0D4]/45">
@@ -423,10 +423,10 @@ export function QuestApp() {
                         Like
                       </TaskLink>
                       <TaskLink href={current.retweetUrl} disabled={!current.retweetUrl}>
-                        Repost
+                        Retweet
                       </TaskLink>
                       <TaskLink href={tweetHref} disabled={!tweetHref}>
-                        Open post
+                        Open quest
                       </TaskLink>
                       {(oauth || bearer) && (
                         <Button
@@ -434,7 +434,7 @@ export function QuestApp() {
                           onClick={verify}
                           disabled={!canVerify || busy === "verify"}
                         >
-                          {busy === "verify" ? "Reading marks…" : "Verify marks"}
+                          {busy === "verify" ? "Reading the marks…" : "Verify like & retweet"}
                         </Button>
                       )}
                     </div>
@@ -442,11 +442,11 @@ export function QuestApp() {
                       <ul className="mt-3 space-y-2 text-sm text-[#E8E0D4]/80">
                         <li className="flex items-center gap-2">
                           <Mark done={current.liked} />
-                          Like {current.liked ? "recorded" : current.likeUnsupported ? "not readable with Bearer" : "pending"}
+                          Like {current.liked ? "seen" : current.likeUnsupported ? "unreadable here" : "waiting"}
                         </li>
                         <li className="flex items-center gap-2">
                           <Mark done={current.retweeted} />
-                          Retweet {current.retweeted ? "recorded" : "pending"}
+                          Retweet {current.retweeted ? "seen" : "waiting"}
                         </li>
                       </ul>
                     )}
@@ -459,7 +459,7 @@ export function QuestApp() {
                             onChange={(e) => setAttestedLike(e.target.checked)}
                             className="size-4 accent-[#1F6B4A]"
                           />
-                          I liked the quest post
+                          I liked the quest post.
                         </label>
                         {!bearer && (
                           <label className="flex cursor-pointer items-center gap-3">
@@ -469,7 +469,7 @@ export function QuestApp() {
                               onChange={(e) => setAttestedRt(e.target.checked)}
                               className="size-4 accent-[#1F6B4A]"
                             />
-                            I reposted the quest post
+                            I retweeted the quest post.
                           </label>
                         )}
                       </div>
@@ -481,10 +481,10 @@ export function QuestApp() {
                   <Mark done={walletCheck.ok} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[11px] tracking-[0.22em] text-[#C9A227] uppercase">
-                      03 · Name the wallet
+                      03 · Enter ETH address
                     </p>
                     <Label htmlFor="wallet" className="mt-1 text-sm font-normal text-[#E8E0D4]/70">
-                      ETH address required. If you are chosen, this is the door we open.
+                      Enter your ETH wallet address. Required. If you are chosen, this is the door we open.
                     </Label>
                     <Input
                       id="wallet"
@@ -518,10 +518,10 @@ export function QuestApp() {
                 {!canRegister && (
                   <p className="mt-3 text-xs text-[#E8E0D4]/40">
                     {oauth
-                      ? "Connect X, verify the marks, and leave a valid wallet."
+                      ? "Bind X, like and retweet, then enter a valid ETH address."
                       : bearer
-                        ? "Leave a handle, verify the marks, and leave a valid wallet."
-                        : "Leave a handle, mark like + RT, and leave a valid wallet."}
+                        ? "Leave your X, like and retweet, then enter a valid ETH address."
+                        : "Leave your X, like and retweet, then enter a valid ETH address."}
                   </p>
                 )}
               </div>
