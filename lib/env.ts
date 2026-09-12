@@ -26,7 +26,7 @@ export function getTwitterCallbackUrl(): string {
 
 export function getTargetTweetId(): string {
   // Live quest tweet (@UMBRAStudio11 Coming Soon / petition). Override via TARGET_TWEET_ID.
-  return read("TARGET_TWEET_ID") || "2098601445071159548";
+  return read("TARGET_TWEET_ID") || "2098645520574980507";
 }
 
 export function getSessionSecret(): string {
