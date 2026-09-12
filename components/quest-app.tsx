@@ -660,8 +660,8 @@ export function QuestApp() {
           </p>
           <p className="max-w-xl sm:text-right">
             UMBRA is an independent project. Not a stock token. Not equity. Not affiliated
-            with Robinhood Markets, Inc., its affiliates, or its products. Settlement is
-            Ethereum L2 (Arbitrum Orbit).
+            with Robinhood Markets, Inc., its affiliates, or its products. Minting on
+            Robinhood Chain — an Ethereum-layer chain.
           </p>
         </div>
       </footer>
