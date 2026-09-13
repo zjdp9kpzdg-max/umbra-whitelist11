@@ -638,7 +638,7 @@ export function QuestApp() {
                 loop
                 playsInline
                 preload="metadata"
-                aria-label="UMBRA — names became liabilities; relics worn in shadow"
+                aria-label="UMBRA — names became liabilities; Bound in the umbra."
               />
             </div>
             <div className="pointer-events-none absolute -bottom-3 -right-3 sm:bottom-4 sm:right-4">
@@ -651,7 +651,7 @@ export function QuestApp() {
       <footer className="mt-auto border-t border-[#C9A227]/15 px-5 py-6 sm:px-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 text-xs leading-6 text-[#E8E0D4]/40 sm:flex-row sm:items-start sm:justify-between">
           <p>
-            UMBRA — the darkest part of a shadow. Relics worn in shadow. 1,111 nocturnal
+            UMBRA — the darkest part of a shadow. Bound in the umbra. 1,111 nocturnal
             wardens minting on Ethereum.{" "}
             <a
               href={UMBRA_X_URL}

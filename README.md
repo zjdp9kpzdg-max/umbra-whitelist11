@@ -2,7 +2,7 @@
 
 Petition site for UMBRA. Visitors open the page from the X post, complete the quest, leave an ETH wallet, and submit for consideration. Submission is not a whitelist. Jeremy reviews and approves who is added to the mint list.
 
-Tagline: *Relics worn in shadow.*
+Tagline: *Bound in the umbra.*
 
 Official X: [@UMBRAStudio11](https://x.com/UMBRAStudio11)
 

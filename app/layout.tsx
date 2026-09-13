@@ -21,7 +21,7 @@ const display = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: "UMBRA · Petition",
   description:
-    "Umbra — the darkest part of a shadow. Art project. That's it. 1,111 nocturnal wardens minting on Ethereum. Relics worn in shadow. Petition the Order.",
+    "Umbra — the darkest part of a shadow. Art project. That's it. 1,111 nocturnal wardens minting on Ethereum. Bound in the umbra. Petition the Order.",
   icons: {
     icon: [{ url: "/brand/icon-180.png", type: "image/png" }],
     apple: [{ url: "/brand/icon-180.png" }],
@@ -29,14 +29,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: "UMBRA",
     description:
-      "Umbra — the darkest part of a shadow. Art project. That's it. 1,111 wardens minting on Ethereum. Relics worn in shadow.",
+      "Umbra — the darkest part of a shadow. Art project. That's it. 1,111 wardens minting on Ethereum. Bound in the umbra.",
     images: [{ url: "/brand/x_banner.jpg", width: 1500, height: 500 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "UMBRA",
     description:
-      "Umbra — the darkest part of a shadow. Art project. That's it. 1,111 wardens minting on Ethereum. Relics worn in shadow.",
+      "Umbra — the darkest part of a shadow. Art project. That's it. 1,111 wardens minting on Ethereum. Bound in the umbra.",
     images: ["/brand/x_banner.jpg"],
   },
 };

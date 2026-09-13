@@ -77,7 +77,7 @@ function statusCopy(view: ViewState) {
   return {
     badge: "Under review",
     title: "Under review.",
-    body: "Your petition waits in the ledger. Selection is not guaranteed. The Order reviews in silence. Relics worn in shadow.",
+    body: "Your petition waits in the ledger. Selection is not guaranteed. The Order reviews in silence. Bound in the umbra.",
   };
 }
 

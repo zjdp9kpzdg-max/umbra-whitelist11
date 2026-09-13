@@ -17,7 +17,7 @@ export function SiteNav({ active }: { active?: "petition" | "status" }) {
       <div className="relative w-full overflow-hidden border-b border-[#C9A227]/15">
         <Image
           src="/brand/x_banner.jpg"
-          alt="UMBRA — Relics worn in shadow"
+          alt="UMBRA — Bound in the umbra."
           width={1500}
           height={500}
           priority
@@ -34,7 +34,7 @@ export function SiteNav({ active }: { active?: "petition" | "status" }) {
               Art project. That&apos;s it.
             </p>
             <p className="mt-1.5 text-xs tracking-[0.18em] text-[#E8E0D4]/55 uppercase">
-              Relics worn in shadow.
+              Bound in the umbra.
             </p>
           </div>
         </Link>
