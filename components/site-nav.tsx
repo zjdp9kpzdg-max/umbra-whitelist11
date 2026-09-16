@@ -1,8 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SIGNAL_STILL_SRC, SIGNAL_SUPPLY } from "@/lib/brand";
+import {
+  SIGNAL_STILL_SRC,
+  SIGNAL_SUPPLY,
+  WHITELIST_ENABLED,
+} from "@/lib/brand";
 
-export function SiteNav({ active }: { active?: "petition" | "status" }) {
+export function SiteNav({
+  active,
+}: {
+  active?: "petition" | "status" | "manifesto" | "whitepaper";
+}) {
   const link = (href: string, key: typeof active, label: string) => (
     <Link
       href={href}
@@ -31,8 +39,10 @@ export function SiteNav({ active }: { active?: "petition" | "status" }) {
           </p>
         </div>
       </Link>
-      <nav className="flex items-center gap-4 font-mono text-[11px] tracking-[0.16em] text-[#E8E0D4]/50">
-        {link("/#petition", "petition", "petition")}
+      <nav className="flex flex-wrap items-center justify-end gap-4 font-mono text-[11px] tracking-[0.16em] text-[#E8E0D4]/50">
+        {WHITELIST_ENABLED ? link("/#petition", "petition", "petition") : null}
+        {link("/manifesto", "manifesto", "manifesto")}
+        {link("/whitepaper", "whitepaper", "whitepaper")}
         {link("/status", "status", "status")}
       </nav>
     </header>

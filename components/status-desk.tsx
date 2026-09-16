@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { UMBRA_X_HANDLE } from "@/lib/brand";
+import { UMBRA_X_HANDLE, WHITELIST_ENABLED } from "@/lib/brand";
 import type { ApplicationStatus } from "@/lib/db";
 import type { PublicState } from "@/lib/types";
 
@@ -296,7 +296,11 @@ export function StatusDesk() {
                   "rounded-none border-[#C9A227]/40"
                 )}
               >
-                {view.submitted ? "back to petition" : "send a petition"}
+                {WHITELIST_ENABLED
+                  ? view.submitted
+                    ? "back to petition"
+                    : "send a petition"
+                  : "back"}
               </Link>
             </div>
             <p className="mt-6 text-xs text-[#E8E0D4]/40">

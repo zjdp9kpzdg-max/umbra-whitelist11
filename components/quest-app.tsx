@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UMBRA_X_HANDLE } from "@/lib/brand";
+import { UMBRA_X_HANDLE, WHITELIST_ENABLED } from "@/lib/brand";
 import { normalizeHandle } from "@/lib/handle";
 import { cn } from "@/lib/utils";
 import type { PublicState } from "@/lib/types";
@@ -78,7 +78,7 @@ function TaskLink({
 }
 
 export function QuestApp() {
-  const navActive = "petition" as const;
+  const navActive = WHITELIST_ENABLED ? ("petition" as const) : undefined;
   const searchParams = useSearchParams();
   const [state, setState] = useState<PublicState>(emptyState);
   const [handle, setHandle] = useState("");
@@ -295,7 +295,8 @@ export function QuestApp() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-5 pb-16 sm:px-8">
         <SignalHero />
 
-        <section id="petition" className="mx-auto mt-16 max-w-xl space-y-8 scroll-mt-8">
+        {WHITELIST_ENABLED ? (
+          <section id="petition" className="mx-auto mt-16 max-w-xl space-y-8 scroll-mt-8">
           <div className="space-y-3">
             <p className="font-mono text-[11px] tracking-[0.22em] text-[#C9A227]">
               petition
@@ -618,7 +619,8 @@ export function QuestApp() {
               {displayError}
             </p>
           )}
-        </section>
+          </section>
+        ) : null}
       </main>
 
       <SiteFooter />
