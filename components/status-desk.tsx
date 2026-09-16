@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { UMBRA_X_HANDLE } from "@/lib/brand";
+import { UMBRA_X_HANDLE, WHITELIST_ENABLED } from "@/lib/brand";
 import type { ApplicationStatus } from "@/lib/db";
 import type { PublicState } from "@/lib/types";
 
@@ -202,7 +202,7 @@ export function StatusDesk() {
 
   return (
     <div className="relative z-50 flex min-h-full flex-1 flex-col">
-      <SiteNav active="status" />
+      <SiteNav />
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 pb-16 sm:px-8">
         <p className="font-mono text-[11px] tracking-[0.22em] text-[#C9A227]">
           status
@@ -296,7 +296,11 @@ export function StatusDesk() {
                   "rounded-none border-[#C9A227]/40"
                 )}
               >
-                {view.submitted ? "back to petition" : "send a petition"}
+                {WHITELIST_ENABLED
+                  ? view.submitted
+                    ? "back to petition"
+                    : "send a petition"
+                  : "back"}
               </Link>
             </div>
             <p className="mt-6 text-xs text-[#E8E0D4]/40">

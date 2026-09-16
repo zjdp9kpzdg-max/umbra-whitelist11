@@ -1,7 +1,14 @@
 import Image from "next/image";
 import { PixelGif } from "@/components/pixel-gif";
-import { SIGNAL_CAST, SIGNAL_MORPH_SRC, SIGNAL_STILL_SRC } from "@/lib/brand";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  SIGNAL_CAST,
+  SIGNAL_MINT_URL,
+  SIGNAL_MORPH_SRC,
+  SIGNAL_STILL_SRC,
+} from "@/lib/brand";
 import { SIGNAL_STORY } from "@/lib/signal-story";
+import { cn } from "@/lib/utils";
 
 export function SignalHero() {
   return (
@@ -31,6 +38,22 @@ export function SignalHero() {
           <p className="mt-6 whitespace-pre-wrap font-mono text-[15px] leading-7 text-[#E8E0D4]/78 sm:text-base">
             {SIGNAL_STORY}
           </p>
+          <div className="mt-8 space-y-3">
+            <a
+              href={SIGNAL_MINT_URL}
+              target="_blank"
+              rel="noreferrer"
+              className={cn(
+                buttonVariants(),
+                "h-11 rounded-none bg-[#3DDC84] px-6 text-[#07070A] hover:bg-[#3DDC84]/90"
+              )}
+            >
+              1,111 free mint only
+            </a>
+            <p className="font-mono text-xs leading-5 text-[#E8E0D4]/45">
+              you pay gas. one wallet. don’t be weird.
+            </p>
+          </div>
         </div>
       </div>
 
