@@ -95,8 +95,8 @@ export async function POST(request: Request) {
         if (!retweeted) missing.push("retweet");
         const detail =
           followUnsupported && !followedOk
-            ? "Mark that you follow @UMBRAStudio11, then Seal again."
-            : `Still missing: ${missing.join(", ")}. Verify again, then Seal.`;
+            ? "mark that you follow @UMBRAStudio11, then send it again."
+            : `still missing: ${missing.join(", ")}. verify, then send it.`;
         return NextResponse.json(
           {
             error: detail,
@@ -205,8 +205,8 @@ export async function POST(request: Request) {
         return NextResponse.json(
           {
             error: engagement.followUnsupported
-              ? "Mark that you follow @UMBRAStudio11."
-              : "Follow @UMBRAStudio11, then verify again.",
+              ? "mark that you follow @UMBRAStudio11."
+              : "follow @UMBRAStudio11, then verify again.",
             liked: true,
             retweeted: true,
             followed: engagement.followed,
@@ -250,7 +250,7 @@ export async function POST(request: Request) {
   }
   if (!body.liked || !body.retweeted || !body.followed) {
     return NextResponse.json(
-      { error: "Follow @UMBRAStudio11, like and retweet the quest post, then mark all complete." },
+      { error: "follow @UMBRAStudio11, like and retweet the post, then mark all complete." },
       { status: 403 }
     );
   }

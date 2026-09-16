@@ -1,6 +1,7 @@
 import Image from "next/image";
 
-/** Locked UMBRA seal — same mark as X / brand kit. Do not invent variants. */
+/** Signal still — 407 fallback face. */
+
 export function RelicMark({
   className,
   size = 320,
@@ -12,12 +13,13 @@ export function RelicMark({
 }) {
   return (
     <Image
-      src="/brand/seal.png"
-      alt="UMBRA"
+      src="/signal/407.png"
+      alt="signal"
       width={size}
       height={size}
+      unoptimized
       priority={priority}
-      className={className}
+      className={`pixel ${className ?? ""}`}
     />
   );
 }

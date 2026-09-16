@@ -1,7 +1,7 @@
 import { AdminDesk } from "@/components/admin-desk";
 
 export const metadata = {
-  title: "UMBRA · Petitions",
+  title: "signal · petitions",
   robots: { index: false, follow: false },
 };
 
