@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { upsertRegistration } from "@/lib/db";
-import { isBearerEnabled, isOauthEnabled } from "@/lib/env";
+import { isBearerEnabled, isOauthEnabled, isWhitelistEnabled } from "@/lib/env";
 import { honorUserId, normalizeHandle } from "@/lib/handle";
 import { publicState } from "@/lib/public-state";
 import { getSession, isConnected } from "@/lib/session";
@@ -43,6 +43,13 @@ type Body = {
 };
 
 export async function POST(request: Request) {
+  if (!isWhitelistEnabled()) {
+    return NextResponse.json(
+      { error: "petitions closed. mint is public." },
+      { status: 403 }
+    );
+  }
+
   let body: Body = {};
   try {
     body = (await request.json()) as Body;

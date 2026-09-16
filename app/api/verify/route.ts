@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isBearerEnabled, isOauthEnabled } from "@/lib/env";
+import { isBearerEnabled, isOauthEnabled, isWhitelistEnabled } from "@/lib/env";
 import { normalizeHandle } from "@/lib/handle";
 import { publicState } from "@/lib/public-state";
 import { getSession, isConnected } from "@/lib/session";
@@ -156,10 +156,19 @@ async function runVerify(request: Request) {
   );
 }
 
+function petitionsClosed() {
+  return NextResponse.json(
+    { error: "petitions closed. mint is public." },
+    { status: 403 }
+  );
+}
+
 export async function POST(request: Request) {
+  if (!isWhitelistEnabled()) return petitionsClosed();
   return runVerify(request);
 }
 
 export async function GET(request: Request) {
+  if (!isWhitelistEnabled()) return petitionsClosed();
   return runVerify(request);
 }

@@ -1,7 +1,10 @@
 import Image from "next/image";
 import { PixelGif } from "@/components/pixel-gif";
+import { buttonVariants } from "@/components/ui/button";
 import { SIGNAL_CAST, SIGNAL_MORPH_SRC, SIGNAL_STILL_SRC } from "@/lib/brand";
+import { SIGNAL_DROP_URL } from "@/lib/drop";
 import { SIGNAL_STORY } from "@/lib/signal-story";
+import { cn } from "@/lib/utils";
 
 export function SignalHero() {
   return (
@@ -31,6 +34,17 @@ export function SignalHero() {
           <p className="mt-6 whitespace-pre-wrap font-mono text-[15px] leading-7 text-[#E8E0D4]/78 sm:text-base">
             {SIGNAL_STORY}
           </p>
+          <a
+            href={SIGNAL_DROP_URL}
+            target="_blank"
+            rel="noreferrer"
+            className={cn(
+              buttonVariants(),
+              "mt-8 inline-flex h-11 rounded-none bg-[#C9A227] px-6 text-sm tracking-[0.14em] text-[#07070A] uppercase hover:bg-[#C9A227]/90"
+            )}
+          >
+            mint on opensea
+          </a>
         </div>
       </div>
 

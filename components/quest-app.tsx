@@ -399,7 +399,7 @@ export function QuestApp() {
                             </Button>
                           ) : (
                             <a
-                              href="/api/auth/twitter?next=/"
+                              href="/api/auth/twitter?next=/whitelist"
                               className={cn(
                                 buttonVariants(),
                                 "rounded-none bg-[#C9A227] text-[#07070A] hover:bg-[#C9A227]/90"

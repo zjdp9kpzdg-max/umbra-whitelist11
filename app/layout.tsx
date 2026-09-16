@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const description = `they don’t sleep. ${SIGNAL_SUPPLY} pixel radio-head pfps.`;
+const description = `they don’t sleep. ${SIGNAL_SUPPLY} pixel radio-head pfps. free mint. 1/wallet.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SIGNAL_SITE_URL),

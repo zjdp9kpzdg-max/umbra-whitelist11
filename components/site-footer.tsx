@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { UMBRA_X_HANDLE, UMBRA_X_URL } from "@/lib/brand";
+import { SIGNAL_DROP_URL } from "@/lib/drop";
 
 export function SiteFooter() {
   return (
@@ -15,7 +17,25 @@ export function SiteFooter() {
             @{UMBRA_X_HANDLE}
           </a>
         </p>
-        <p className="max-w-xl sm:text-right">not a promise. not a team.</p>
+        <p className="max-w-xl sm:text-right">
+          <Link href="/manifesto" className="hover:text-[#3DDC84]">
+            manifesto
+          </Link>
+          {" · "}
+          <Link href="/whitepaper" className="hover:text-[#3DDC84]">
+            whitepaper
+          </Link>
+          {" · "}
+          <a
+            href={SIGNAL_DROP_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#C9A227]/80 hover:text-[#C9A227]"
+          >
+            mint
+          </a>
+          . not a team.
+        </p>
       </div>
     </footer>
   );

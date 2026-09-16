@@ -290,7 +290,7 @@ export function StatusDesk() {
                 </Button>
               )}
               <Link
-                href="/"
+                href="/whitelist"
                 className={cn(
                   buttonVariants({ variant: "outline" }),
                   "rounded-none border-[#C9A227]/40"

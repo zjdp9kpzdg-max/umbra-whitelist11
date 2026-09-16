@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isOauthEnabled } from "@/lib/env";
+import { isOauthEnabled, isWhitelistEnabled } from "@/lib/env";
 import { pkceChallenge, pkceVerifier, randomToken } from "@/lib/oauth";
 import { getSession } from "@/lib/session";
 import { buildTwitterAuthUrl } from "@/lib/twitter";
@@ -7,7 +7,7 @@ import { buildTwitterAuthUrl } from "@/lib/twitter";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const ALLOWED_NEXT = new Set(["/", "/status"]);
+const ALLOWED_NEXT = new Set(["/", "/status", "/whitelist"]);
 
 function safeNext(raw: string | null): string {
   if (!raw) return "/";
@@ -21,6 +21,9 @@ function homeUrl(request: Request, query?: string): URL {
 }
 
 export async function GET(request: Request) {
+  if (!isWhitelistEnabled()) {
+    return NextResponse.redirect(homeUrl(request));
+  }
   if (!isOauthEnabled()) {
     return NextResponse.redirect(
       homeUrl(
