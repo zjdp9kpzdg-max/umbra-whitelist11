@@ -78,7 +78,6 @@ function TaskLink({
 }
 
 export function QuestApp() {
-  const navActive = WHITELIST_ENABLED ? ("petition" as const) : undefined;
   const searchParams = useSearchParams();
   const [state, setState] = useState<PublicState>(emptyState);
   const [handle, setHandle] = useState("");
@@ -290,7 +289,7 @@ export function QuestApp() {
 
   return (
     <div className="relative z-50 flex min-h-full flex-1 flex-col">
-      <SiteNav active={navActive} />
+      <SiteNav />
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-5 pb-16 sm:px-8">
         <SignalHero />

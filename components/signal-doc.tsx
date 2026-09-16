@@ -1,5 +1,8 @@
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
+import { buttonVariants } from "@/components/ui/button";
+import { SIGNAL_MINT_URL } from "@/lib/brand";
+import { cn } from "@/lib/utils";
 
 export function SignalDoc({
   kicker,
@@ -20,6 +23,22 @@ export function SignalDoc({
           </p>
           <div className="whitespace-pre-wrap font-mono text-[15px] leading-7 text-[#E8E0D4]/78 sm:text-base">
             {body}
+          </div>
+          <div className="space-y-3 pt-4">
+            <a
+              href={SIGNAL_MINT_URL}
+              target="_blank"
+              rel="noreferrer"
+              className={cn(
+                buttonVariants(),
+                "h-11 rounded-none bg-[#3DDC84] px-6 text-[#07070A] hover:bg-[#3DDC84]/90"
+              )}
+            >
+              1,111 free mint only
+            </a>
+            <p className="font-mono text-xs leading-5 text-[#E8E0D4]/45">
+              you pay gas. one wallet. don’t be weird.
+            </p>
           </div>
         </article>
       </main>

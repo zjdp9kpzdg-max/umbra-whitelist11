@@ -202,7 +202,7 @@ export function StatusDesk() {
 
   return (
     <div className="relative z-50 flex min-h-full flex-1 flex-col">
-      <SiteNav active="status" />
+      <SiteNav />
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 pb-16 sm:px-8">
         <p className="font-mono text-[11px] tracking-[0.22em] text-[#C9A227]">
           status
