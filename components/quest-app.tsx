@@ -80,7 +80,7 @@ function TaskLink({
 export function QuestApp() {
   const navActive = "petition" as const;
   const searchParams = useSearchParams();
-  const [state, setState] = useState<PublicState | null>(null);
+  const [state, setState] = useState<PublicState>(emptyState);
   const [handle, setHandle] = useState("");
   const [handleError, setHandleError] = useState<string | null>(null);
   const [attestedLike, setAttestedLike] = useState(false);
@@ -121,8 +121,7 @@ export function QuestApp() {
   }, []);
 
   const displayError = error || queryError || loadError;
-  const current = state ?? emptyState;
-  const ready = Boolean(state);
+  const current = state;
   const oauth = current.oauthEnabled;
   const bearer = current.bearerEnabled;
   const walletCheck = normalizeWallet(wallet, { required: true });
@@ -312,11 +311,7 @@ export function QuestApp() {
             </p>
           </div>
 
-          {!ready && (
-            <p className="font-mono text-sm tracking-[0.12em] text-[#C9A227]/80">loading.</p>
-          )}
-
-          {ready && current.submitted ? (
+          {current.submitted ? (
             <div
               className={
                 current.status === "approved"

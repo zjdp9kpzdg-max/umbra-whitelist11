@@ -84,7 +84,6 @@ function statusCopy(view: ViewState) {
 
 export function StatusDesk() {
   const [session, setSession] = useState<PublicState>(empty);
-  const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [lookupBusy, setLookupBusy] = useState(false);
   const [handleInput, setHandleInput] = useState("");
@@ -110,8 +109,8 @@ export function StatusDesk() {
         const res = await fetch("/api/session", { cache: "no-store" });
         const data = (await res.json()) as PublicState;
         if (alive) setSession({ ...empty, ...data });
-      } finally {
-        if (alive) setReady(true);
+      } catch {
+        /* lookup form stays up even if session is quiet */
       }
     }
     load();
@@ -216,10 +215,7 @@ export function StatusDesk() {
           under review, or on the list. nothing here is automatic.
         </p>
 
-        {!ready ? (
-          <p className="mt-10 font-mono text-sm tracking-[0.12em] text-[#C9A227]/80">loading.</p>
-        ) : (
-          <div className="mt-10 border border-[#C9A227]/25 bg-[#0C0C11]/80 p-6 sm:p-8">
+        <div className="mt-10 border border-[#C9A227]/25 bg-[#0C0C11]/80 p-6 sm:p-8">
             <Badge className={cn("rounded-none", badgeTone)}>{copy.badge}</Badge>
             <h2 className="font-mono mt-4 text-2xl text-[#E8E0D4]">{copy.title}</h2>
             <p className="mt-3 text-sm leading-6 text-[#E8E0D4]/70">{copy.body}</p>
@@ -307,7 +303,6 @@ export function StatusDesk() {
               watch @{UMBRA_X_HANDLE}.
             </p>
           </div>
-        )}
       </main>
       <SiteFooter />
     </div>
