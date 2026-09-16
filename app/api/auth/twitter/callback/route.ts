@@ -6,7 +6,7 @@ import { exchangeTwitterCode, getTwitterMe } from "@/lib/twitter";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const ALLOWED_NEXT = new Set(["/", "/status"]);
+const ALLOWED_NEXT = new Set(["/", "/status", "/whitelist"]);
 
 function safeReturn(path: string | undefined): string {
   if (!path) return "/";

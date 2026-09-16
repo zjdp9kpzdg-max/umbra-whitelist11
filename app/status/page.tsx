@@ -1,5 +1,7 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { StatusDesk } from "@/components/status-desk";
+import { isWhitelistEnabled } from "@/lib/flags";
 
 export const metadata = {
   title: "signal · status",
@@ -15,6 +17,9 @@ function Fallback() {
 }
 
 export default function StatusPage() {
+  if (!isWhitelistEnabled()) {
+    redirect("/");
+  }
   return (
     <Suspense fallback={<Fallback />}>
       <StatusDesk />

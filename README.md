@@ -1,24 +1,23 @@
-# signal whitelist
+# signal
 
-Petition site for **signal** — 1,111 pixel radio-head pfps. Visitors open the page from the X post, complete the quest, leave an ETH wallet, and submit for consideration. Submission is not a whitelist. Jeremy reviews and approves who is added to the mint list.
+Public site for **signal** — 1,111 pixel radio-head pfps. Launch day is a public OpenSea drop, not a whitelist petition.
 
-Official X: [@UMBRAStudio11](https://x.com/UMBRAStudio11)
+- Domain: [umbra1111.xyz](https://umbra1111.xyz)
+- Official X: [@UMBRAStudio11](https://x.com/UMBRAStudio11)
+- Mint: [OpenSea collection](https://opensea.io/collection/signal-158424856) — free (gas only), 1/wallet, public 11:11 AM ET 16 Sep 2026, unrevealed until sell-out
 
-Domain: [umbra1111.xyz](https://umbra1111.xyz)
+The homepage is story + drop CTA. Manifesto lives at `/manifesto`. Whitepaper lives at `/whitepaper`.
 
-**Visitors only click Connect X. Project owner sets X OAuth env vars in hosting — never in the chat.**
+## Hide / restore the whitelist petition
 
-End users never enter API keys. There is no secrets field in the UI. Tokens live only in `.env.local` or the host’s project settings (for example Vercel). Do not paste X keys into chat with an assistant.
+Public Connect X / follow-like-RT / ETH / send-petition UI is **off** unless you opt back in.
 
-signal is an independent project. Minting on Ethereum mainnet.
+| `NEXT_PUBLIC_WHITELIST_ENABLED` | Public site |
+| --- | --- |
+| unset or `false` (launch default) | Drop site only. `/whitelist` and `/status` redirect home. Register/verify APIs return 403. |
+| `true` | Restores the petition at `/whitelist` and status at `/status`. Redeploy after changing this (it is inlined at build time). |
 
-## Visitor flow
-
-1. Open `/`, `/list`, or `/whitelist`
-2. Connect X **or**, if OAuth is not configured, leave an X handle
-3. Like + retweet the quest post
-4. Leave a required ETH wallet
-5. Submit a petition (status: **pending**). Selection is not guaranteed.
+Set it in `.env.local` or Vercel project env. Never paste secrets into the UI or into chat.
 
 ## Auth modes
 
@@ -84,7 +83,7 @@ npm install
 npm run dev
 ```
 
-Open [http://127.0.0.1:43147](http://127.0.0.1:43147). The same UI is at `/list` and `/whitelist`.
+Open [http://127.0.0.1:43147](http://127.0.0.1:43147). Manifesto `/manifesto`, whitepaper `/whitepaper`. Petition `/whitelist` only if `NEXT_PUBLIC_WHITELIST_ENABLED=true`.
 
 Developer Portal callback for local must be exactly `http://127.0.0.1:43147/api/auth/twitter/callback` (127.0.0.1, not localhost, unless you change both sides).
 
@@ -112,7 +111,7 @@ You need a **new source build** on Vercel (Git connect or `vercel deploy` from a
 2. **Settings → Git → Connect Git Repository**.
    - **Hobby:** connect **GitHub** (Origin private repos cannot deploy on Hobby). Push this repo to GitHub, then import it.
    - **Pro:** **Continue with Origin** and select this repo.
-3. Confirm Production env vars are on **Production** (not Preview only): `TWITTER_CLIENT_ID`, `TWITTER_CLIENT_SECRET`, `TWITTER_CALLBACK_URL`, `SESSION_SECRET`, `ADMIN_TOKEN`, optional `TWITTER_BEARER_TOKEN` / `TARGET_TWEET_ID`.
+3. Confirm Production env vars are on **Production** (not Preview only). Launch default: leave `NEXT_PUBLIC_WHITELIST_ENABLED` unset or `false`. Optional Twitter keys stay available if you restore the petition later (`TWITTER_CLIENT_ID`, `TWITTER_CLIENT_SECRET`, `TWITTER_CALLBACK_URL`, `SESSION_SECRET`, `ADMIN_TOKEN`, optional `TWITTER_BEARER_TOKEN` / `TARGET_TWEET_ID`).
 4. **Deployments → Create Deployment** → branch `main` (or the GitHub commit) → Production.
 5. Wait until the new deployment is **Ready**. Ignore Redeploy on the old prebuilt row.
 6. **Settings → Domains** → add `umbra-whitelist.vercel.app` if it is still free.
@@ -148,8 +147,9 @@ Hobby cannot import Origin private repos. Instead:
 
 | Name | What to paste |
 | --- | --- |
-| `TWITTER_CLIENT_ID` | OAuth 2.0 client id |
-| `TWITTER_CLIENT_SECRET` | OAuth 2.0 client secret |
+| `NEXT_PUBLIC_WHITELIST_ENABLED` | `false` on launch. `true` restores the public petition UI (requires a new deploy) |
+| `TWITTER_CLIENT_ID` | OAuth 2.0 client id (petition restore only) |
+| `TWITTER_CLIENT_SECRET` | OAuth 2.0 client secret (petition restore only) |
 | `TWITTER_CALLBACK_URL` | `https://<name>.vercel.app/api/auth/twitter/callback` |
 | `TWITTER_BEARER_TOKEN` | Optional app-only token |
 | `TARGET_TWEET_ID` | Leave empty until the Coming Soon RT is posted |
@@ -165,6 +165,7 @@ See `.env.example`. All of these are for the **project owner**.
 
 | Variable | Purpose |
 | --- | --- |
+| `NEXT_PUBLIC_WHITELIST_ENABLED` | `true` restores public petition UI. Default / `false` hides it. |
 | `TWITTER_BEARER_TOKEN` | App-only token. Handle lookup + RT (and like if X allows). Cannot sign in. |
 | `TWITTER_CLIENT_ID` | OAuth 2.0 client id — required for Connect X |
 | `TWITTER_CLIENT_SECRET` | OAuth 2.0 client secret — required for Connect X |
@@ -200,7 +201,12 @@ When OAuth is present, `/api/verify` and `/api/register` check likes via `GET /2
 
 | Path | Role |
 | --- | --- |
-| `/`, `/list`, `/whitelist` | Petition UI |
+| `/` | Drop homepage (story, mint CTA, unrevealed art) |
+| `/manifesto` | Manifesto |
+| `/whitepaper` | Whitepaper |
+| `/whitelist` | Petition UI when `NEXT_PUBLIC_WHITELIST_ENABLED=true`; otherwise redirects home |
+| `/status` | Petition status when whitelist is on; otherwise redirects home |
+| `/list` | Redirects to `/status` or `/` |
 | `/admin` | Jeremy’s review desk (token-gated) |
 | `/api/auth/twitter` | Start OAuth (disabled when client id/secret are absent) |
 | `/api/auth/twitter/callback` | OAuth callback |
@@ -238,7 +244,7 @@ Columns: `status`, `wallet_address`, `twitter_handle`, `twitter_user_id`, `liked
 
 ## Scope
 
-v1 is a petition: X identity, like + retweet one quest post, required ETH wallet, submit for consideration. Jeremy chooses who is added to the mint whitelist. There is no follow task, reply task, manifesto, essay, or Zcash address. Visitors are never asked for API keys.
+Launch v1 is the public drop site: story, manifesto, whitepaper, OpenSea mint. The old petition stack remains in the repo and can be restored with `NEXT_PUBLIC_WHITELIST_ENABLED=true`. Visitors are never asked for API keys.
 
 ## Notes
 

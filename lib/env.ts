@@ -1,4 +1,7 @@
 import { UMBRA_X_HANDLE } from "@/lib/brand";
+import { isWhitelistEnabled } from "@/lib/flags";
+
+export { isWhitelistEnabled };
 
 function read(name: string): string {
   // Dynamic lookup so a local `next build` cannot inline empty Twitter keys
