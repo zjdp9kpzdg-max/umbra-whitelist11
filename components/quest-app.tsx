@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
-import { RelicMark } from "@/components/relic-mark";
+import { SignalHero } from "@/components/signal-hero";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UMBRA_X_HANDLE, UMBRA_X_URL } from "@/lib/brand";
+import { UMBRA_X_HANDLE } from "@/lib/brand";
 import { normalizeHandle } from "@/lib/handle";
 import { cn } from "@/lib/utils";
 import type { PublicState } from "@/lib/types";
@@ -97,7 +98,7 @@ export function QuestApp() {
     let cancelled = false;
     fetch("/api/session", { cache: "no-store" })
       .then(async (res) => {
-        if (!res.ok) throw new Error("The ledger would not open.");
+        if (!res.ok) throw new Error("couldn't load.");
         return (await res.json()) as PublicState;
       })
       .then((data) => {
@@ -111,7 +112,7 @@ export function QuestApp() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        setLoadError(err instanceof Error ? err.message : "The ledger would not open.");
+        setLoadError(err instanceof Error ? err.message : "couldn't load.");
         setState(emptyState);
       });
     return () => {
@@ -191,10 +192,10 @@ export function QuestApp() {
         if (missing.length > 0) {
           const label = missing.join(", ");
           setError(
-            `The marks are incomplete. ${label.charAt(0).toUpperCase()}${label.slice(1)} still waiting.`
+            `not all there yet. ${label} still waiting.`
           );
         } else if (data.followUnsupported && !data.followed) {
-          setError("Follow could not be read by X — mark that you follow @UMBRAStudio11.");
+          setError("x couldn't read follow — mark that you follow @UMBRAStudio11.");
         }
       } else if (data.followed || data.liked) {
         if (data.followed) setAttestedFollow(true);
@@ -292,28 +293,27 @@ export function QuestApp() {
     <div className="relative z-50 flex min-h-full flex-1 flex-col">
       <SiteNav active={navActive} />
 
-      <main className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 items-center gap-12 px-5 pb-16 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-        <section className="space-y-8">
-          <div className="space-y-5">
-            <p className="text-[11px] tracking-[0.32em] text-[#C9A227] uppercase">
-              Petition // 001 · 1,111 wardens
+      <main className="mx-auto w-full max-w-6xl flex-1 px-5 pb-16 sm:px-8">
+        <SignalHero />
+
+        <section id="petition" className="mx-auto mt-16 max-w-xl space-y-8 scroll-mt-8">
+          <div className="space-y-3">
+            <p className="font-mono text-[11px] tracking-[0.22em] text-[#C9A227]">
+              petition
             </p>
-            <h1 className="font-display max-w-xl text-4xl leading-[1.15] text-[#E8E0D4] sm:text-5xl">
-              After names became liabilities, an order bound identity into relics.
+            <h1 className="font-mono text-2xl leading-snug text-[#E8E0D4] sm:text-3xl">
+              want in? follow, like, rt. drop the wallet.
             </h1>
-            <p className="max-w-lg text-base leading-7 text-[#E8E0D4]/70">
-              Umbra is the darkest part of a shadow. Each binding is a mask, a key, and a face
-              you can wear without explaining yourself. One thousand one hundred eleven nocturnal
-              wardens — minting on Ethereum.{" "}
+            <p className="max-w-lg text-sm leading-6 text-[#E8E0D4]/60">
               {oauth
-                ? "Petition the Order. Bind your X. Follow, like, and retweet. Enter the ETH address at the door."
-                : "Petition the Order. Leave your X. Follow, like, and retweet. Enter the ETH address at the door."}{" "}
-              Selection is not guaranteed.
+                ? "connect x. follow, like, retweet. eth address at the end."
+                : "leave your x. follow, like, retweet. eth address at the end."}{" "}
+              not a promise.
             </p>
           </div>
 
           {!ready && (
-            <p className="text-sm tracking-[0.12em] text-[#C9A227]/80">Opening the ledger.</p>
+            <p className="font-mono text-sm tracking-[0.12em] text-[#C9A227]/80">loading.</p>
           )}
 
           {ready && current.submitted ? (
@@ -341,12 +341,12 @@ export function QuestApp() {
                     ? "Closed"
                     : "Under review"}
               </Badge>
-              <h2 className="font-display mt-4 text-3xl text-[#E8E0D4]">
+              <h2 className="font-mono mt-4 text-2xl text-[#E8E0D4]">
                 {current.status === "approved"
-                  ? "You're on the list."
+                  ? "you're on the list."
                   : current.status === "rejected"
-                    ? "This door does not open."
-                    : "Under review."}
+                    ? "not this time."
+                    : "under review."}
               </h2>
               <p className="mt-3 text-sm text-[#E8E0D4]/65">
                 @{current.handle}
@@ -354,10 +354,10 @@ export function QuestApp() {
               </p>
               <p className="mt-6 text-xs leading-6 text-[#E8E0D4]/45">
                 {current.status === "approved"
-                  ? "The door knows you. Watch @" + UMBRA_X_HANDLE + ". Selection still moves in silence."
+                  ? "watch @" + UMBRA_X_HANDLE + ". still not a promise."
                   : current.status === "rejected"
-                    ? "The petition was received and set aside. The Order does not explain every closed door."
-                    : "Selection is not guaranteed. The Order reviews in silence. Check Status anytime."}
+                    ? "got it. doesn't mean we owe you a speech."
+                    : "not a promise. check status whenever."}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
@@ -383,14 +383,14 @@ export function QuestApp() {
                   <Mark done={identityReady} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[11px] tracking-[0.22em] text-[#C9A227] uppercase">
-                      01 · {oauth ? "Bind your X" : "Leave your X"}
+                      01 · {oauth ? "connect x" : "your x"}
                     </p>
                     {oauth ? (
                       <>
                         <p className="mt-1 text-sm text-[#E8E0D4]/70">
                           {current.connected
-                            ? `Bound as @${current.handle}.`
-                            : "Connect X. The handle is the name we keep in shadow."}
+                            ? `@${current.handle}.`
+                            : "connect x. that's the name we keep."}
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2">
                           {current.connected ? (
@@ -418,7 +418,7 @@ export function QuestApp() {
                     ) : (
                       <>
                         <Label htmlFor="handle" className="mt-1 text-sm font-normal text-[#E8E0D4]/70">
-                          Enter your X handle. Required.
+                          your x handle. required.
                         </Label>
                         <Input
                           id="handle"
@@ -446,9 +446,9 @@ export function QuestApp() {
                             Connect X
                           </Button>
                           <p className="text-[11px] leading-5 text-[#E8E0D4]/35">
-                            Owner: Connect X needs OAuth 2.0 client id/secret in hosting.
-                            A Bearer token can check a handle against the quest post but
-                            cannot sign visitors in. Never paste keys here or in chat.
+                            owner: connect x needs oauth client id/secret in hosting.
+                            a bearer token can check a handle against the post but
+                            cannot sign visitors in. never paste keys here or in chat.
                           </p>
                         </div>
                       </>
@@ -460,14 +460,14 @@ export function QuestApp() {
                   <Mark done={followed && liked && retweeted} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[11px] tracking-[0.22em] text-[#C9A227] uppercase">
-                      02 · Follow · like · retweet
+                      02 · follow · like · retweet
                     </p>
                     <p className="mt-1 text-sm text-[#E8E0D4]/70">
-                      Three marks at the door: follow @{UMBRA_X_HANDLE}, like the quest post, retweet it. All required.
+                      follow @{UMBRA_X_HANDLE}. like the post. retweet it. all of it.
                     </p>
                     {!current.targetTweetId && (
                       <p className="mt-3 text-xs text-[#C9A227]/80">
-                        The quest post is waking. Watch @{UMBRA_X_HANDLE}.
+                        post isn&apos;t up yet. watch @{UMBRA_X_HANDLE}.
                       </p>
                     )}
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -486,7 +486,7 @@ export function QuestApp() {
                           onClick={verify}
                           disabled={!canVerify || busy === "verify"}
                         >
-                          {busy === "verify" ? "Reading the marks…" : "Verify follow · like · retweet"}
+                          {busy === "verify" ? "checking…" : "verify follow · like · retweet"}
                         </Button>
                       )}
                     </div>
@@ -573,10 +573,10 @@ export function QuestApp() {
                   <Mark done={walletCheck.ok} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[11px] tracking-[0.22em] text-[#C9A227] uppercase">
-                      03 · Enter ETH address
+                      03 · eth address
                     </p>
                     <Label htmlFor="wallet" className="mt-1 text-sm font-normal text-[#E8E0D4]/70">
-                      ETH wallet — required. If the Order marks you, this is the door we open. Not an automatic mint list.
+                      eth wallet — required. if you get marked, this is the one. not an automatic list.
                     </Label>
                     <Input
                       id="wallet"
@@ -605,13 +605,13 @@ export function QuestApp() {
                   onClick={register}
                   disabled={!canRegister || busy === "register"}
                 >
-                  {busy === "register" ? "Sealing…" : "Seal your petition"}
+                  {busy === "register" ? "sending…" : "send petition"}
                 </Button>
                 {!canRegister && (
                   <p className="mt-3 text-xs text-[#E8E0D4]/40">
                     {oauth
-                      ? "Bind X, follow · like · retweet, then enter a valid ETH address."
-                      : "Leave your X, follow · like · retweet, then enter a valid ETH address."}
+                      ? "connect x, follow · like · retweet, then a valid eth address."
+                      : "leave your x, follow · like · retweet, then a valid eth address."}
                   </p>
                 )}
               </div>
@@ -624,49 +624,9 @@ export function QuestApp() {
             </p>
           )}
         </section>
-
-        <aside className="relative flex items-center justify-center lg:min-h-[520px]">
-          <div className="absolute inset-10 bg-[#1F6B4A]/10 blur-3xl" />
-          <div className="relative w-full max-w-[480px]">
-            <div className="relative aspect-square overflow-hidden border border-[#C9A227]/25 bg-[#07070A] shadow-[0_0_60px_rgba(7,7,10,0.85)]">
-              <video
-                className="relative h-full w-full object-cover"
-                src="/brand/umbra_glitch_lore.mp4"
-                poster="/brand/umbra_glitch_lore_poster.jpg"
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                aria-label="UMBRA — names became liabilities; Bound in the umbra."
-              />
-            </div>
-            <div className="pointer-events-none absolute -bottom-3 -right-3 sm:bottom-4 sm:right-4">
-              <RelicMark size={88} className="h-16 w-16 sm:h-20 sm:w-20 drop-shadow-[0_0_18px_rgba(7,7,10,0.9)]" />
-            </div>
-          </div>
-        </aside>
       </main>
 
-      <footer className="mt-auto border-t border-[#C9A227]/15 px-5 py-6 sm:px-8">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 text-xs leading-6 text-[#E8E0D4]/40 sm:flex-row sm:items-start sm:justify-between">
-          <p>
-            UMBRA — the darkest part of a shadow. Bound in the umbra. 1,111 nocturnal
-            wardens minting on Ethereum.{" "}
-            <a
-              href={UMBRA_X_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="text-[#C9A227]/70 hover:text-[#C9A227]"
-            >
-              @{UMBRA_X_HANDLE}
-            </a>
-          </p>
-          <p className="max-w-xl sm:text-right">
-            Not a stock token. Not equity. Minting on Ethereum.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

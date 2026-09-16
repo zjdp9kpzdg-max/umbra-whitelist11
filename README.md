@@ -1,16 +1,16 @@
-# UMBRA Whitelist
+# signal whitelist
 
-Petition site for UMBRA. Visitors open the page from the X post, complete the quest, leave an ETH wallet, and submit for consideration. Submission is not a whitelist. Jeremy reviews and approves who is added to the mint list.
-
-Tagline: *Bound in the umbra.*
+Petition site for **signal** — 1,111 pixel radio-head pfps. Visitors open the page from the X post, complete the quest, leave an ETH wallet, and submit for consideration. Submission is not a whitelist. Jeremy reviews and approves who is added to the mint list.
 
 Official X: [@UMBRAStudio11](https://x.com/UMBRAStudio11)
 
-**Visitors only click Connect X. Project owner sets Twitter OAuth env vars in hosting — never in the chat.**
+Domain: [umbra1111.xyz](https://umbra1111.xyz)
 
-End users never enter API keys. There is no secrets field in the UI. Tokens live only in `.env.local` or the host’s project settings (for example Vercel). Do not paste Twitter keys into chat with an assistant.
+**Visitors only click Connect X. Project owner sets X OAuth env vars in hosting — never in the chat.**
 
-UMBRA is an independent project. Minting on Ethereum mainnet.
+End users never enter API keys. There is no secrets field in the UI. Tokens live only in `.env.local` or the host’s project settings (for example Vercel). Do not paste X keys into chat with an assistant.
+
+signal is an independent project. Minting on Ethereum mainnet.
 
 ## Visitor flow
 
@@ -174,7 +174,7 @@ See `.env.example`. All of these are for the **project owner**.
 | `DATABASE_URL` | `file:./data/umbra.sqlite` or a Postgres URL |
 | `ADMIN_TOKEN` | Shared secret for CSV export |
 
-## Twitter Developer Portal (owner)
+## X Developer Portal (owner)
 
 ### Bearer only (current)
 

@@ -2,14 +2,14 @@ import { Suspense } from "react";
 import { StatusDesk } from "@/components/status-desk";
 
 export const metadata = {
-  title: "UMBRA · Status",
-  description: "Read your place at the door. Under review, or marked. The Order reviews in silence.",
+  title: "signal · status",
+  description: "check if you're on the list. not a promise.",
 };
 
 function Fallback() {
   return (
     <div className="flex min-h-full flex-1 items-center justify-center text-sm tracking-[0.16em] text-[#C9A227]/80">
-      Opening the ledger.
+      loading.
     </div>
   );
 }

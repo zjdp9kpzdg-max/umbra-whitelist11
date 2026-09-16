@@ -60,10 +60,10 @@ async function readError(res: Response): Promise<string> {
       json.error ||
       json.title ||
       text ||
-      `Twitter API ${res.status}`
+      `X API ${res.status}`
     );
   } catch {
-    return text || `Twitter API ${res.status}`;
+    return text || `X API ${res.status}`;
   }
 }
 
@@ -149,7 +149,7 @@ async function twitterGet<T>(
   });
 
   if (res.status === 401) {
-    const err = new Error("Twitter session expired.");
+    const err = new Error("X session expired.");
     err.name = "TwitterUnauthorized";
     throw err;
   }

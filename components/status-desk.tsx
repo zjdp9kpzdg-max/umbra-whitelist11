@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -46,38 +47,38 @@ type ViewState = {
 function statusCopy(view: ViewState) {
   if (!view.connected && !view.lookedUp) {
     return {
-      badge: "Sealed",
-      title: "Bind your X — or leave the handle.",
-      body: "Connect X to read the ledger, or enter the handle you petitioned with. Under review, or on the list.",
+      badge: "closed",
+      title: "connect x — or leave the handle.",
+      body: "connect x to check, or type the handle you petitioned with. under review, or on the list.",
     };
   }
   if (!view.submitted) {
     return {
-      badge: "Empty",
-      title: "No petition on file.",
+      badge: "empty",
+      title: "no petition on file.",
       body: view.handle
-        ? `No sealed petition for @${view.handle}. Leave a petition if you mean to be seen. Selection is not automatic.`
-        : "Leave a petition if you mean to be seen. Selection is not automatic.",
+        ? `nothing for @${view.handle}. send one if you actually want in. not automatic.`
+        : "send a petition if you actually want in. not automatic.",
     };
   }
   if (view.status === "approved") {
     return {
-      badge: "On the list",
-      title: "You're on the list.",
-      body: "The Order has marked this name. The door knows you. Watch the signal — selection still moves in silence.",
+      badge: "on the list",
+      title: "you're on the list.",
+      body: "name's marked. still not a promise. watch the account.",
     };
   }
   if (view.status === "rejected") {
     return {
-      badge: "Closed",
-      title: "This door does not open.",
-      body: "The petition was received and set aside. The Order does not explain every closed door.",
+      badge: "closed",
+      title: "not this time.",
+      body: "got the petition. doesn't mean we owe you a speech.",
     };
   }
   return {
-    badge: "Under review",
-    title: "Under review.",
-    body: "Your petition waits in the ledger. Selection is not guaranteed. The Order reviews in silence. Bound in the umbra.",
+    badge: "under review",
+    title: "under review.",
+    body: "it's in. not a promise. check back whenever.",
   };
 }
 
@@ -156,7 +157,7 @@ export function StatusDesk() {
         status?: ApplicationStatus | null;
         walletHint?: string | null;
       };
-      if (!res.ok) throw new Error(data.error || "The ledger would not open.");
+      if (!res.ok) throw new Error(data.error || "couldn't load.");
       setLookup({
         lookedUp: true,
         handle: data.handle ?? null,
@@ -165,7 +166,7 @@ export function StatusDesk() {
         walletHint: data.walletHint ?? null,
       });
     } catch (err) {
-      setLookupError(err instanceof Error ? err.message : "The ledger would not open.");
+      setLookupError(err instanceof Error ? err.message : "couldn't load.");
     } finally {
       setLookupBusy(false);
     }
@@ -204,25 +205,23 @@ export function StatusDesk() {
     <div className="relative z-50 flex min-h-full flex-1 flex-col">
       <SiteNav active="status" />
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center px-5 pb-16 sm:px-8">
-        <p className="text-[11px] tracking-[0.32em] text-[#C9A227] uppercase">
-          Status // ledger
+        <p className="font-mono text-[11px] tracking-[0.22em] text-[#C9A227]">
+          status
         </p>
-        <h1 className="font-display mt-4 text-4xl text-[#E8E0D4]">
-          Read your place at the door.
+        <h1 className="font-mono mt-4 text-3xl text-[#E8E0D4]">
+          check the list.
         </h1>
         <p className="mt-3 max-w-md text-sm leading-6 text-[#E8E0D4]/60">
-          Umbra is the darkest part of a shadow. 1,111 wardens mint on Ethereum. Petitions
-          still require Connect X at the door. Here you can bind X, or leave the handle you
-          already petitioned with — under review, or on the list. Nothing here is automatic
-          favor.
+          signal. 1,111 heads. connect x, or type the handle you already used.
+          under review, or on the list. nothing here is automatic.
         </p>
 
         {!ready ? (
-          <p className="mt-10 text-sm tracking-[0.12em] text-[#C9A227]/80">Opening the ledger.</p>
+          <p className="mt-10 font-mono text-sm tracking-[0.12em] text-[#C9A227]/80">loading.</p>
         ) : (
           <div className="mt-10 border border-[#C9A227]/25 bg-[#0C0C11]/80 p-6 sm:p-8">
             <Badge className={cn("rounded-none", badgeTone)}>{copy.badge}</Badge>
-            <h2 className="font-display mt-4 text-3xl text-[#E8E0D4]">{copy.title}</h2>
+            <h2 className="font-mono mt-4 text-2xl text-[#E8E0D4]">{copy.title}</h2>
             <p className="mt-3 text-sm leading-6 text-[#E8E0D4]/70">{copy.body}</p>
             {(view.connected || view.lookedUp) && view.handle && (
               <p className="mt-4 font-mono text-xs text-[#E8E0D4]/45">
@@ -233,11 +232,11 @@ export function StatusDesk() {
 
             {showLookupForm && (
               <div className="mt-8 border-t border-[#C9A227]/15 pt-6">
-                <p className="text-[11px] tracking-[0.22em] text-[#C9A227] uppercase">
-                  Or leave the handle
+                <p className="font-mono text-[11px] tracking-[0.22em] text-[#C9A227]">
+                  or leave the handle
                 </p>
                 <Label htmlFor="status-handle" className="mt-2 text-sm font-normal text-[#E8E0D4]/70">
-                  Status only — if Connect X will not open here, enter the handle from your petition. New petitions still require Connect X.
+                  status only. if connect x won&apos;t open, type the handle from your petition. new ones still need the form.
                 </Label>
                 <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Input
@@ -263,7 +262,7 @@ export function StatusDesk() {
                     onClick={lookupHandle}
                     disabled={lookupBusy || !handleInput.trim()}
                   >
-                    {lookupBusy ? "Reading…" : "Read the ledger"}
+                    {lookupBusy ? "checking…" : "check"}
                   </Button>
                 </div>
                 {lookupError && (
@@ -301,15 +300,16 @@ export function StatusDesk() {
                   "rounded-none border-[#C9A227]/40"
                 )}
               >
-                {view.submitted ? "Return to Petition" : "Leave a petition"}
+                {view.submitted ? "back to petition" : "send a petition"}
               </Link>
             </div>
             <p className="mt-6 text-xs text-[#E8E0D4]/40">
-              Watch @{UMBRA_X_HANDLE}.
+              watch @{UMBRA_X_HANDLE}.
             </p>
           </div>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

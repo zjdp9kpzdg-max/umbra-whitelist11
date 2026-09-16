@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
+import type { ReactNode } from "react";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import {
+  SIGNAL_OG_IMAGE,
+  SIGNAL_SITE_URL,
+  SIGNAL_SUPPLY,
+  UMBRA_X_HANDLE,
+} from "@/lib/brand";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,40 +19,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const display = Cormorant_Garamond({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const description = `they don’t sleep. ${SIGNAL_SUPPLY} pixel radio-head pfps.`;
 
 export const metadata: Metadata = {
-  title: "UMBRA · Petition",
-  description:
-    "Umbra — the darkest part of a shadow. Art project. That's it. 1,111 nocturnal wardens minting on Ethereum. Bound in the umbra. Petition the Order.",
+  metadataBase: new URL(SIGNAL_SITE_URL),
+  title: "signal",
+  description,
   icons: {
-    icon: [{ url: "/brand/icon-180.png", type: "image/png" }],
-    apple: [{ url: "/brand/icon-180.png" }],
+    icon: [{ url: SIGNAL_OG_IMAGE, type: "image/png" }],
+    apple: [{ url: SIGNAL_OG_IMAGE }],
   },
   openGraph: {
-    title: "UMBRA",
-    description:
-      "Umbra — the darkest part of a shadow. Art project. That's it. 1,111 wardens minting on Ethereum. Bound in the umbra.",
-    images: [{ url: "/brand/x_banner.jpg", width: 1500, height: 500 }],
+    title: "signal",
+    description,
+    images: [{ url: SIGNAL_OG_IMAGE, width: 512, height: 512 }],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "UMBRA",
-    description:
-      "Umbra — the darkest part of a shadow. Art project. That's it. 1,111 wardens minting on Ethereum. Bound in the umbra.",
-    images: ["/brand/x_banner.jpg"],
+    card: "summary",
+    title: "signal",
+    description,
+    images: [SIGNAL_OG_IMAGE],
+    creator: `@${UMBRA_X_HANDLE}`,
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <html
       lang="en"
-      className={`dark ${geistSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}
+      className={`dark ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>

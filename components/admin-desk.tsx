@@ -111,13 +111,13 @@ export function AdminDesk() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-8">
-      <p className="text-[11px] tracking-[0.32em] text-[#C9A227] uppercase">
-        Order // Review
+      <p className="font-mono text-[11px] tracking-[0.22em] text-[#C9A227]">
+        review
       </p>
-      <h1 className="font-display mt-3 text-4xl text-[#E8E0D4]">Petitions</h1>
+      <h1 className="font-mono mt-3 text-3xl text-[#E8E0D4]">petitions</h1>
       <p className="mt-2 max-w-xl text-sm leading-6 text-[#E8E0D4]/60">
-        Submissions wait here. Approve to put them on the list — Status will show
-        it when they bind X. Rejection closes the door. Nothing is automatic.
+        they wait here. approve to put them on the list — status shows it when
+        they connect x. reject closes it. nothing is automatic.
       </p>
       {dbNote && (
         <p
